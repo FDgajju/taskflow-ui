@@ -6,6 +6,7 @@
   --color-secondary-bg: #fbfaf9;
   --color-sidebar-selected: #e8e8e8;
   --color-searchbar: #f8f8f7;
+  --color-gray-text: #949494;
   --color-main: #272727;
   --color-muted: #999999;
   --color-btn-primary: #284cff;
@@ -18,9 +19,9 @@
   --color-priority-medium: #ffc93c;
   --color-priority-low: #00d097;
   --color-status-todo: #335cff;
-  --color-status-progress: #16a34a;
-  --color-status-completed: #6d28d9;
-  --color-status-overdue: #335cff;
+  --color-status-progress: #ffc93c;
+  --color-status-completed: #00d097;
+  --color-status-overdue: #ff5b5b;
 }
 
 /* * {
