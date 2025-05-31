@@ -1,4 +1,5 @@
 import React from "react";
+import { colorClassMapTaskStatus } from "../constants/colorMap";
 
 type TaskMetricsCardProps = {
   icon: React.ReactNode;
@@ -6,14 +7,6 @@ type TaskMetricsCardProps = {
   metrics: number;
   text: string;
   color?: string;
-};
-
-const colorClassMap: Record<string, string> = {
-  "btn-primary": "bg-primary-bg",
-  "status-todo": "bg-status-todo",
-  "status-progress": "bg-status-progress",
-  "status-completed": "bg-status-completed",
-  "status-overdue": "bg-status-overdue",
 };
 
 const TaskMetricsCard: React.FC<TaskMetricsCardProps> = ({
@@ -27,7 +20,7 @@ const TaskMetricsCard: React.FC<TaskMetricsCardProps> = ({
     <article className="rounded-3xl p-5 flex flex-col justify-center items-start gap-4 text-main bg-secondary-bg">
       <div
         aria-hidden="true"
-        className={`${colorClassMap[color]} p-1.5 rounded-full`}
+        className={`${colorClassMapTaskStatus[color]} p-1.5 rounded-full`}
       >
         <span role="img" aria-label="Icon">
           {icon}

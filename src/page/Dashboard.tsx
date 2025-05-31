@@ -6,11 +6,12 @@ import { ImClock } from "react-icons/im";
 import { RiProgress6Line } from "react-icons/ri";
 import { MdTaskAlt } from "react-icons/md";
 import { TbProgressAlert } from "react-icons/tb";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import ProductivityChart, {
   type ChartPoint,
 } from "../components/ProductivityChart";
 import H2 from "../components/H2";
+import TaskTable from "../components/TaskTable";
 
 const Dashboard: React.FC = () => {
   const chartData = useMemo<ChartPoint[]>(
@@ -113,6 +114,10 @@ const Dashboard: React.FC = () => {
     []
   );
 
+  const [activeTab, setActiveTab] = useState<string | null>("all");
+
+  const activeListStatus = useMemo(() => activeTab, [activeTab]);
+
   return (
     <div>
       <PageHeader header="Task Overview" />
@@ -122,7 +127,7 @@ const Dashboard: React.FC = () => {
           Task status
         </h2>
 
-        <TaskStatusNav />
+        <TaskStatusNav handleTabChange={(tab: string) => setActiveTab(tab)} />
         <div className="grid gap-4 mt-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {metricsData.map((m) => (
             <TaskMetricsCard
@@ -142,6 +147,13 @@ const Dashboard: React.FC = () => {
           <H2 text="Productivity Trends" />
 
           <ProductivityChart data={chartData} />
+        </div>
+      </section>
+      <section className="mt-8">
+        <div className="flex flex-col gap-4">
+          <H2 text="Task List" />
+
+          <TaskTable status={activeListStatus} />
         </div>
       </section>
     </div>

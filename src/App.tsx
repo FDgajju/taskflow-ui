@@ -4,23 +4,26 @@ import Dashboard from "./page/Dashboard";
 import Tasks from "./page/Tasks";
 import Calendar from "./page/Calendar";
 import Settings from "./page/Settings";
+import AddTaskForm from "./page/AddTaskForm";
+import EditTaskForm from "./page/EditTaskForm";
 
 function App() {
-	return (
-		<div className="flex flex-row min-h-screen bg-primary-bg">
-			<Routes>
-				<Route element={<DashboardLayout />}>
-					<Route path="/dashboard" element={<Dashboard />} />
-					<Route path="/tasks" element={<Tasks />} />
-					<Route path="/calendar" element={<Calendar />} /> {/* fix spelling */}
-					<Route path="/settings" element={<Settings />} />
-				</Route>
-				{/* optionally a catch-all 404 or redirect to /dashboard */}
-				<Route path="*" element={<Navigate to="/dashboard" replace/>} />
-			</Routes>
-		</div>
-	);
+  return (
+    <div className="flex flex-row min-h-screen bg-primary-bg">
+      <Routes>
+        <Route element={<DashboardLayout />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/tasks" element={<Tasks />} />
+          <Route path="/calendar" element={<Calendar />} /> {/* fix spelling */}
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/add-new-task" element={<AddTaskForm />} />
+          <Route path="/edit-task/:id" element={<EditTaskForm />} />
+        </Route>
+        {/* optionally a catch-all 404 or redirect to /dashboard */}
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      </Routes>
+    </div>
+  );
 }
 
 export default App;
-	
