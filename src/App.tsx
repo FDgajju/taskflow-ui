@@ -6,10 +6,14 @@ import Calendar from "./page/Calendar";
 import Settings from "./page/Settings";
 import AddTaskForm from "./page/AddTaskForm";
 import EditTaskForm from "./page/EditTaskForm";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
     <div className="flex flex-row min-h-screen bg-primary-bg">
+      <div>
+        <Toaster />
+      </div>
       <Routes>
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />

@@ -6,9 +6,16 @@ import { RiFlagLine } from "react-icons/ri";
 import { FaRegUser } from "react-icons/fa";
 import { MdOutlineAddLink } from "react-icons/md";
 import Button from "../components/Button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, type ChangeEvent, type FormEvent } from "react";
-import type { DummyTask } from "../mockData/tasks";
+import toast from "react-hot-toast";
+import axios, { AxiosError } from "axios";
+import { apiEndpoint } from "../constants/env";
+
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import type { TaskT } from "../types/task";
+
+const ButtonSubmitLoading = "/animation_file/button-loading.lottie";
 
 const formFullDivStyle = "flex flex-col gap-2";
 const formInputStyle =
@@ -16,34 +23,80 @@ const formInputStyle =
 const formLabelStyle = "text-lg font-semibold";
 
 const AddTaskForm: React.FC = () => {
-  const [taskData, setTaskData] = useState<Partial<DummyTask>>({});
-  const [error, setError] = useState<Record<string, string>>({});
+  const [taskData, setTaskData] = useState<Partial<TaskT>>({
+    priority: "low",
+    status: "todo",
+    workspace: "1234",
+  });
+  const [error, setError] = useState<Record<string, string | undefined>>({});
+  const [loading, setLoading] = useState(false);
+  const [fadeOut, setFadeOut] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleOnchange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+
+    setError((prev) => {
+      prev[name as string] = undefined;
+      return { ...prev };
+    });
     setTaskData((task) => ({ ...task, [name]: value }));
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    setError({});
+    // setError({});
+    setLoading(true);
     const newError: Record<string, string> = {};
     if (!taskData.title) newError.title = "Title is required!";
+
     if (!taskData.deadLine) newError.deadLine = "please specify the deadline!";
+    console.log(newError);
 
     if (Object.keys(newError).length) {
       setError(newError);
+      return toast.error("Please fill all the required fields!");
     } else {
-      console.log("Task Form Data", taskData);
+      (async () => {
+        try {
+          console.log(taskData);
+          const resp = await axios.post(`${apiEndpoint}/task`, taskData);
+
+          if (String(resp.status).startsWith("2"))
+            toast.success("task created!");
+          else if (String(resp.status).startsWith("4"))
+            toast.error(resp.data.error);
+          else
+            toast.error("Something unexpected happen, please contact admin!");
+        } catch (error) {
+          console.log(error);
+          if (error instanceof AxiosError)
+            toast.error(error.response?.data.error);
+          else toast.error("Unknown error occurs, please contact admin!");
+        } finally {
+          setFadeOut(true);
+          setTimeout(() => {
+            setLoading(false);
+            setError({});
+            setTaskData({});
+            navigate("/tasks");
+          }, 500);
+        }
+      })();
     }
   };
 
   return (
     <section className="w-full flex justify-center items-center">
-      <div className="w-3/4 p-4">
+      <div
+        className={`w-3/4 p-4 transition-opacity duration-500 ${
+          fadeOut ? "opacity-0" : "opacity-100"
+        }`}
+      >
         <h2 className=" text-3xl font-bold text-main py-5">Create New Task </h2>
 
         <form
@@ -69,7 +122,7 @@ const AddTaskForm: React.FC = () => {
                 id="t-title"
                 type="text"
                 placeholder="Enter task title"
-                value={taskData.title}
+                value={taskData.title || ""}
                 required
               />
               {error.title && (
@@ -91,7 +144,7 @@ const AddTaskForm: React.FC = () => {
               onChange={handleOnchange}
               name="description"
               className={`${formInputStyle} h-45`}
-              value={taskData.description}
+              value={taskData.description || ""}
               placeholder="Description"
               id="t-description"
             />
@@ -106,9 +159,9 @@ const AddTaskForm: React.FC = () => {
                 <input
                   onChange={handleOnchange}
                   name="deadLine"
-                  value={taskData.deadLine}
+                  value={taskData.deadLine || ""}
                   className={`${formInputStyle} w-full ${
-                    error.title
+                    error.deadLine
                       ? "ring-1 ring-priority-high focus:ring-1 focus:ring-priority-high"
                       : ""
                   }`}
@@ -116,9 +169,9 @@ const AddTaskForm: React.FC = () => {
                   id="t-due-date"
                   required
                 />
-                {error.title && (
+                {error.deadLine && (
                   <div className="absolute -top-9.5 right-2 z-10 bg-priority-high text-white px-2 py-1 rounded shadow-md text-xs font-semibold fade-in">
-                    {error.title}
+                    {error.deadLine}
                     {/* Arrow bana sakta hai pseudo-element ya svg se */}
                     {/* <div className="absolute left-3 top-full w-2 h-2 bg-priority-high rotate-45"></div> */}
                   </div>
@@ -135,7 +188,7 @@ const AddTaskForm: React.FC = () => {
                 <select
                   onChange={handleOnchange}
                   name="priority"
-                  value={taskData.priority}
+                  value={taskData.priority || ""}
                   className={`${formInputStyle} appearance-none`}
                   id="t-priority"
                   required
@@ -158,7 +211,7 @@ const AddTaskForm: React.FC = () => {
                 <input
                   onChange={handleOnchange}
                   name="tag"
-                  value={taskData.tag}
+                  value={taskData.tag || ""}
                   className={formInputStyle}
                   type="text"
                   id="t-tag"
@@ -177,7 +230,7 @@ const AddTaskForm: React.FC = () => {
                 <input
                   onChange={handleOnchange}
                   name="assignedTo"
-                  value={taskData.assignedTo}
+                  value={taskData.assignedTo || ""}
                   className={formInputStyle}
                   type="text"
                   placeholder="Add team member"
@@ -206,11 +259,23 @@ const AddTaskForm: React.FC = () => {
           </div>
 
           <div className="flex justify-star gap-5">
-            <Button type="submit" onClick={() => {}}>
-              {/* <Link to="/tasks">Create Task</Link>
-               */}
-              Create Task
-            </Button>
+            {!loading && (
+              <Button style="w-30" type="submit" onClick={() => {}}>
+                {/* <Link to="/tasks">Create Task</Link>
+                 */}
+                Create Task
+              </Button>
+            )}
+            {loading && (
+              <div className="h-10 w-30 bg-btn-secondary rounded-lg flex items-center justify-center">
+                <DotLottieReact
+                  className="w-20"
+                  src={ButtonSubmitLoading}
+                  loop
+                  autoplay
+                />
+              </div>
+            )}
             <Button
               type="button"
               onClick={() => {}}

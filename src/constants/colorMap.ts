@@ -2,7 +2,7 @@ export const colorClassMapTaskStatus: Record<string, string> = {
 	"btn-primary": "bg-primary-bg",
 	"status-todo": "bg-status-todo",
 	"status-inprogress": "bg-status-progress",
-	"status-completed": "bg-status-completed",
+	"status-done": "bg-status-done",
 	"status-overdue": "bg-status-overdue",
 };
 
