@@ -7,6 +7,7 @@ import Settings from "./page/Settings";
 import AddTaskForm from "./page/AddTaskForm";
 import EditTaskForm from "./page/EditTaskForm";
 import { Toaster } from "react-hot-toast";
+import TaskDetails from "./page/TaskDetails";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/tasks" element={<Tasks />} />
+          <Route path="/task/:id" element={<TaskDetails />} />
           <Route path="/calendar" element={<Calendar />} /> {/* fix spelling */}
           <Route path="/settings" element={<Settings />} />
           <Route path="/add-new-task" element={<AddTaskForm />} />
