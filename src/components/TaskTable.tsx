@@ -140,7 +140,9 @@ const TaskTable: React.FC<TaskTableProps> = ({ status = "all" }) => {
                 tabIndex={0}
                 className="hover:bg-sidebar-selected  border-b-2 border-sidebar-selected"
               >
-                <td className="font-semibold text-left py-4">{task.title}</td>
+                <td className="font-semibold text-left py-4">
+                  <Link to={`/task/${task._id}`}>{task.title}</Link>
+                </td>
                 <td className=" text-left px-4 py-4">
                   {
                     <HightedText
@@ -157,11 +159,7 @@ const TaskTable: React.FC<TaskTableProps> = ({ status = "all" }) => {
                   {
                     <HightedText
                       text={task.status || "#"}
-                      style={
-                        colorClassMapTaskStatus[
-                          `status-${task.status || "todo"}`
-                        ]
-                      }
+                      style={colorClassMapTaskStatus[task.status || "todo"]}
                     />
                   }
                 </td>
