@@ -84,7 +84,7 @@ const Dashboard: React.FC = () => {
         value: 10,
         description: "Tasks not yet started",
         icon: <ImClock className="text-primary-bg text-xl" />,
-        colorClass: "status-todo",
+        colorClass: "todo",
       },
       {
         key: "inprogress",
@@ -92,7 +92,7 @@ const Dashboard: React.FC = () => {
         value: 5,
         description: "Tasks being worked on",
         icon: <RiProgress6Line className="text-primary-bg text-xl" />,
-        colorClass: "status-progress",
+        colorClass: "inprogress",
       },
       {
         key: "completed",
@@ -100,7 +100,7 @@ const Dashboard: React.FC = () => {
         value: 8,
         description: "Finished tasks",
         icon: <MdTaskAlt className="text-primary-bg text-xl" />,
-        colorClass: "status-completed",
+        colorClass: "done",
       },
       {
         key: "overdue",
@@ -108,7 +108,7 @@ const Dashboard: React.FC = () => {
         value: 3,
         description: "Past due tasks",
         icon: <TbProgressAlert className="text-primary-bg text-xl" />,
-        colorClass: "status-overdue",
+        colorClass: "overdue",
       },
     ],
     []
