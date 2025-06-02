@@ -45,16 +45,20 @@ const TaskDeleteConfirmation: React.FC<TaskDeleteConfirmationProp> = ({
 
         <div className="flex gap-3 justify-end">
           <Button
-            reference={cancelButtonRef}
+            ref={cancelButtonRef}
             style="bg-btn-secondary focus:ring-2 focus:ring-btn-primary"
             type="button"
             onClick={onCancel}
           >
             <span className="text-btn-primary">Cancel</span>
           </Button>
-          <Button type="submit" style="bg-status-overdue w-20 flex justify-center items-center" onClick={onConfirm}>
+          <Button
+            type="submit"
+            style="bg-status-overdue w-20 flex justify-center items-center"
+            onClick={onConfirm}
+          >
             {deleting ? (
-              <div role="status" >
+              <div role="status">
                 <svg
                   aria-hidden="true"
                   className="w-4 h-4 text-gray-200 animate-spin dark:text-gray-600 fill-status-overdue"
