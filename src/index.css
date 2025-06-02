@@ -1,6 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 @import "tailwindcss";
 
+/*
+  bg-primary-bg bg-status-todo bg-status-progress bg-status-overdue bg-status-done
+  bg-status-todo-secondary bg-status-progress-secondary bg-status-done-secondary bg-status-overdue-secondary
+*/
+
 @theme {
   --color-primary-bg: #ffffff;
   --color-secondary-bg: #fbfaf9;
@@ -20,9 +25,14 @@
   --color-priority-medium: #ffc93c;
   --color-priority-low: #00d097;
   --color-status-todo: #335cff;
+  --color-status-todo-secondary: #d4dbff;
   --color-status-progress: #ffc93c;
+  --color-status-inprogress: #ffc93c;
+  --color-status-inprogress-secondary: #fbffd4;
   --color-status-done: #00d097;
+  --color-status-done-secondary: #d4ffd7;
   --color-status-overdue: #ff5b5b;
+  --color-status-overdue-secondary: #ffd4d4;
 }
 
 @layer utilities {
