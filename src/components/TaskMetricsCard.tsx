@@ -14,8 +14,9 @@ const TaskMetricsCard: React.FC<TaskMetricsCardProps> = ({
   highlightText,
   metrics,
   text,
-  color = "btn-primary",
+  color = "done",
 }) => {
+
   return (
     <article className="rounded-3xl p-5 flex flex-col justify-center items-start gap-4 text-main bg-secondary-bg">
       <div
