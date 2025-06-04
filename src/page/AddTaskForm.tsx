@@ -46,6 +46,7 @@ const AddTaskForm: React.FC = () => {
     setTaskData((task) => ({ ...task, [name]: value }));
   };
 
+  // handle submit
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -59,6 +60,7 @@ const AddTaskForm: React.FC = () => {
 
     if (Object.keys(newError).length) {
       setError(newError);
+      setLoading(false)
       return toast.error("Please fill all the required fields!");
     } else {
       (async () => {
