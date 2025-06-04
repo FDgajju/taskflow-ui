@@ -20,17 +20,29 @@
   --color-btn-primary-text: #ffffff;
   --color-btn-secondary-text: #284cff;
 
-  /* status and priority */
+  /*  priority */
   --color-priority-high: #ff5b5b;
+  --color-priority-high-secondary: #ffd4d4;
+
   --color-priority-medium: #ffc93c;
+  --color-priority-medium-secondary: #fdf1d3;
+
   --color-priority-low: #00d097;
+  --color-priority-low-secondary: #d4ffd7;
+
+  /* status */
   --color-status-todo: #335cff;
   --color-status-todo-secondary: #d4dbff;
+
   --color-status-progress: #ffc93c;
+  --color-status-progress-secondary: #fdf1d3;
+
   --color-status-inprogress: #ffc93c;
-  --color-status-inprogress-secondary: #fbffd4;
+  --color-status-inprogress-secondary: #fdf1d3;
+
   --color-status-done: #00d097;
   --color-status-done-secondary: #d4ffd7;
+
   --color-status-overdue: #ff5b5b;
   --color-status-overdue-secondary: #ffd4d4;
 }
