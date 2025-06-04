@@ -18,7 +18,8 @@ export type TaskT = {
   assignedTo: string;
   assignedBy: string;
   comments: string;
-  attachments: string;
+  attachments: string[];
+  dependencies: TaskT[];
 
   createdAt: Date;
   updatedAt: Date;
