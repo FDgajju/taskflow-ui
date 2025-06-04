@@ -1,18 +1,60 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { LuCalendar1, LuClipboardList } from "react-icons/lu";
+import { useNavigate, useParams } from "react-router-dom";
+import axios, { AxiosError } from "axios";
+import toast from "react-hot-toast";
+import { FaExclamation } from "react-icons/fa";
+import { CgTag } from "react-icons/cg";
+import { HiMiniFaceSmile } from "react-icons/hi2";
+
 import Button from "../components/Button";
 import HeadingCard from "../components/HeadingCard";
-import { LuClipboardList } from "react-icons/lu";
 import type { TaskT } from "../types/task";
-import { useParams } from "react-router-dom";
-import axios, { AxiosError } from "axios";
 import { apiEndpoint } from "../constants/env";
-import toast from "react-hot-toast";
 import ButtonLink from "../components/ButtonLink";
+import { getFormattedDateDD_MM_YYYY } from "../utils/getFormatedDate";
+import TaskDeleteConfirmation from "../components/TaskDeleteConfirmation";
+import H2 from "../components/H2";
+import DisplayImage from "../components/DisplayImage";
+import DependencyRow from "../components/DependencyRow";
+import {
+  colorClassMapTaskPriority,
+  colorClassMapTaskPriorityText,
+} from "../constants/colorMap";
 
-const TaskDetails = () => {
+const DUMMY_DEPS: Partial<TaskT>[] = [
+  {
+    _id: "683bfae006aefc8a75ebf93b",
+    title: "This is Dummy Deps",
+    priority: "low",
+    status: "todo",
+    deadLine: getFormattedDateDD_MM_YYYY(new Date("2025-06-08").toISOString()),
+
+    tag: "string",
+    workspace: "string",
+  },
+  {
+    _id: "683bfaf506aefc8a75ebf93d",
+    title: "This is Dummy Deps 2",
+    priority: "high",
+    status: "inprogress",
+    deadLine: getFormattedDateDD_MM_YYYY(new Date("2025-06-08").toISOString()),
+
+    tag: "string",
+    workspace: "string",
+  },
+];
+
+const TaskDetails: React.FC = () => {
   const [data, setData] = useState<Partial<TaskT>>({});
   const [loading, setLoading] = useState<boolean>(true);
+  const [deleteConfirmation, setDeleteConfirmation] = useState<boolean>(false);
+  const [deleting, setDeleting] = useState<boolean>(false);
+  const [taskDeleteId, setTaskDeleteId] = useState<string>("");
+  const [showImage, setShowImage] = useState<boolean>(false);
+  const [imageUrl, setImageUrl] = useState<string>("");
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const taskDetails = useMemo<Partial<TaskT> | null>(() => data, [data]);
 
@@ -41,6 +83,35 @@ const TaskDetails = () => {
     return () => controller.abort();
   }, [id, fetchData]);
 
+  // handle delete confirm
+  const handleDeleteConfirm = async () => {
+    setDeleting(true);
+    try {
+      const resp = await axios.delete(`${apiEndpoint}/task/${id}`);
+      if (String(resp.status).startsWith("2")) {
+        toast.success(`Task deleted: ${taskDetails?.title}`);
+        setTimeout(() => {
+          navigate("/tasks");
+        }, 500);
+      } else if (String(resp.status).startsWith("4"))
+        toast.error(resp.data.error);
+      else toast.error("Something unexpected happen, please contact admin!");
+    } catch (error) {
+      console.log(error);
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.error || error.message);
+      } else {
+        toast.error("An unknown error occurred, please contact admin!");
+      }
+    } finally {
+      setTimeout(() => {
+        setDeleting(false);
+        setTaskDeleteId("");
+        setDeleteConfirmation(false);
+      }, 500);
+    }
+  };
+
   return (
     <section className="w-full flex flex-col justify-center items-center">
       {loading && <span>Loading...</span>}
@@ -49,15 +120,32 @@ const TaskDetails = () => {
           {/* heading */}
           <div className="flex justify-between align-middle items-center">
             <h2 className=" text-3xl font-bold text-main py-5">Overview</h2>
-            <Button type="button" onClick={() => {}} style="bg-btn-secondary">
+            <Button
+              type="button"
+              onClick={() => {
+                navigate("/tasks");
+              }}
+              style="bg-btn-secondary"
+            >
               <span className="text-btn-primary">Go Back</span>
             </Button>
           </div>
 
-          <div>
-            {/* <div className="w-full p-5 bg-secondary-bg rounded-3xl">
-            
-          </div> */}
+          <div className="flex flex-col gap-2">
+            {deleteConfirmation && (
+              <TaskDeleteConfirmation
+                deleting={deleting}
+                id={taskDeleteId}
+                onCancel={() => {
+                  toast.success("Task delete cancelled ❌");
+                  setDeleteConfirmation(false);
+                  setTaskDeleteId("");
+                }}
+                onConfirm={handleDeleteConfirm}
+              />
+            )}
+
+            {/* heading card */}
             <HeadingCard
               className="flex gap-4"
               highlightText={taskDetails?.status || "todo"}
@@ -77,12 +165,162 @@ const TaskDetails = () => {
 
               <Button
                 type="button"
-                onClick={() => {}}
+                onClick={() => {
+                  setDeleteConfirmation(true);
+                  setTaskDeleteId(taskDetails?._id || "");
+                }}
                 className="bg-status-overdue-secondary text-status-overdue focus:ring-2 focus:ring-status-overdue"
               >
                 <span>Delete Task</span>
               </Button>
             </HeadingCard>
+
+            {/* time stamps */}
+            <div className="bg-secondary-bg flex flex-wrap gap-3 p-2 text-xs rounded-3xl">
+              <p className=" border-gray-text py-0.5 px-1.5 rounded-lg text-gray-text font-semibold">
+                Created:{" "}
+                <span>
+                  {getFormattedDateDD_MM_YYYY(String(taskDetails?.createdAt))}
+                </span>
+              </p>
+              {taskDetails?.updatedAt !== taskDetails?.createdAt && (
+                <p className=" border-gray-text py-0.5 px-1.5 rounded-md text-gray-text font-semibold">
+                  Updated:{" "}
+                  <span>
+                    {getFormattedDateDD_MM_YYYY(String(taskDetails?.updatedAt))}
+                  </span>
+                </p>
+              )}
+            </div>
+
+            {/* main grid */}
+            <article className="pt-2 grid grid-cols-1 lg:grid-cols-2 gap-3 ">
+              {/* due date */}
+              <div className="bg-secondary-bg p-3 rounded-3xl flex gap-5">
+                <div className="p-4 flex justify-center items-center bg-btn-secondary rounded-2xl text-btn-primary">
+                  <LuCalendar1 className="text-3xl" />
+                </div>
+                <div className="flex flex-col justify-evenly">
+                  <p className="text-xl font-semibold">Due Date</p>
+                  <p className="text-sm text-gray-text font-medium italic">
+                    {getFormattedDateDD_MM_YYYY(taskDetails?.deadLine || "")}
+                  </p>
+                </div>
+              </div>
+
+              {/* priority date */}
+              <div className="bg-secondary-bg p-3 rounded-3xl flex gap-5">
+                <div
+                  className={`${
+                    colorClassMapTaskPriority[
+                      `${taskDetails?.priority || "low"}_secondary`
+                    ]
+                  } ${
+                    colorClassMapTaskPriorityText[
+                      `${taskDetails?.priority || "low"}`
+                    ]
+                  } p-4 flex justify-center items-center bg-btn-secondary rounded-2xl text-btn-primary`}
+                >
+                  <FaExclamation className="text-3xl" />
+                </div>
+                <div className="flex flex-col justify-evenly">
+                  <p className="text-xl font-semibold">Priority</p>
+                  <p
+                    className={`${
+                      colorClassMapTaskPriorityText[
+                        taskDetails?.priority || "low"
+                      ]
+                    } text-sm text-gray-text font-medium italic font-semibold`}
+                  >
+                    {taskDetails?.priority}
+                  </p>
+                </div>
+              </div>
+
+              {/* priority date */}
+              <div className="bg-secondary-bg p-3 rounded-3xl flex gap-5">
+                <div className="p-4 flex justify-center items-center bg-btn-secondary rounded-2xl text-btn-primary">
+                  <CgTag className="text-3xl" />
+                </div>
+                <div className="flex flex-col justify-evenly">
+                  <p className="text-xl font-semibold">Tag</p>
+                  <p className="text-sm text-gray-text font-medium italic">
+                    {taskDetails?.tag}
+                  </p>
+                </div>
+              </div>
+              <div className="bg-secondary-bg p-3 rounded-3xl flex gap-5">
+                {/* will replace with original profile picture */}
+                <div className="p-4 flex justify-center items-center bg-btn-secondary rounded-2xl text-btn-primary">
+                  <HiMiniFaceSmile className="text-3xl" />
+                </div>
+                <div className="flex flex-col justify-evenly">
+                  <p className="text-xl font-semibold">Assignee</p>
+                  {taskDetails?.assignedTo && (
+                    <p className="text-sm text-gray-text font-medium italic">
+                      taskDetails.assignedTo
+                    </p>
+                  )}
+                  {!taskDetails?.assignedTo && (
+                    <p className="text-sm italic font-bold text-btn-primary">
+                      Assign Someone
+                    </p>
+                  )}
+                </div>
+              </div>
+            </article>
+
+            {/* attachments */}
+            <div className="py-2">
+              <H2 text="Attachments" />
+
+              <div className="flex gap-2 justify-center w-full items-center p-4 overflow-x-auto bg-secondary-bg rounded-3xl">
+                {showImage && (
+                  <DisplayImage
+                    handleClose={() => {
+                      setShowImage(false);
+                      setImageUrl("");
+                    }}
+                    url={imageUrl}
+                  />
+                )}
+                {taskDetails?.attachments &&
+                  taskDetails.attachments.map((url) => (
+                    <div key={url}>
+                      <img
+                        src={url}
+                        key={url}
+                        className="h-[300px] rounded-2xl cursor-pointer hover:border-2 hover:border-btn-primary transition-all duration-100 p-0.5"
+                        alt="Attachment Image"
+                        onClick={() => {
+                          setShowImage(true);
+                          setImageUrl(url);
+                        }}
+                      />
+                    </div>
+                  ))}
+
+                {!taskDetails?.attachments && (
+                  <p className="text-sm text-gray-text">
+                    There's no attachments{" "}
+                    <span className="font-bold text-btn-primary">
+                      Browse to upload
+                    </span>
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* dependencies */}
+            <div className="py-2">
+              <H2 text="Dependencies" />
+              <div className="flex flex-col gap-1 py-2">
+                {DUMMY_DEPS &&
+                  DUMMY_DEPS.map((dep) => (
+                    <DependencyRow key={dep._id} depsData={dep} />
+                  ))}
+              </div>
+            </div>
           </div>
         </div>
       )}
