@@ -68,12 +68,6 @@ const TaskTable: React.FC<TaskTableProps> = ({ status = "all" }) => {
         if (String(resp.status).startsWith("2")) {
           setData((prev) => prev.filter((t) => t._id !== taskDeleteId));
           toast.success(`Task deleted: ${taskDeleteId}`);
-
-          setTimeout(() => {
-            setTaskDeleteId(null);
-            setDeleteConfirmation(false);
-            setDeleting(false);
-          }, 500);
         } else if (String(resp.status).startsWith("4"))
           toast.error(resp.data.error);
         else toast.error("Something unexpected happen, please contact admin!");
@@ -83,13 +77,19 @@ const TaskTable: React.FC<TaskTableProps> = ({ status = "all" }) => {
         } else {
           toast.error("An unknown error occurred, please contact admin!");
         }
+      } finally {
+        setTimeout(() => {
+          setTaskDeleteId(null);
+          setDeleteConfirmation(false);
+          setDeleting(false);
+        }, 500);
       }
     })();
   };
 
   // delete cancel
   const handleDeleteCancel = () => {
-    toast.success("Task delete canceled ❌");
+    toast.success("Task delete cancelled ❌");
     setTaskDeleteId(null);
     setDeleteConfirmation(false);
   };
