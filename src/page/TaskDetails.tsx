@@ -62,9 +62,13 @@ const TaskDetails: React.FC = () => {
     try {
       const resp = await axios(`${apiEndpoint}/task/${id}`);
       if (String(resp.status).startsWith("2")) setData(resp.data.data);
-      else if (String(resp.status).startsWith("4"))
+      else if (String(resp.status).startsWith("4")) {
         toast.error(resp.data.error);
-      else toast.error("Something unexpected happen, please contact admin!");
+        navigate("/tasks");
+      } else {
+        toast.error("Something unexpected happen, please contact admin!");
+        navigate("/tasks");
+      }
     } catch (error) {
       console.log(error);
       if (error instanceof AxiosError) {
@@ -72,10 +76,12 @@ const TaskDetails: React.FC = () => {
       } else {
         toast.error("An unknown error occurred, please contact admin!");
       }
+
+      navigate("/tasks");
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, navigate]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -156,9 +162,8 @@ const TaskDetails: React.FC = () => {
               highlightBg={`status-${taskDetails?.status}-secondary`}
             >
               <ButtonLink
-                to={`/task${taskDetails?._id}`}
+                to={`/edit-task/${taskDetails?._id}`}
                 type="button"
-                onClick={() => {}}
                 className="text-primary-bg"
                 text="Edit Task"
               />
@@ -258,7 +263,7 @@ const TaskDetails: React.FC = () => {
                   <p className="text-xl font-semibold">Assignee</p>
                   {taskDetails?.assignedTo && (
                     <p className="text-sm text-gray-text font-medium italic">
-                      taskDetails.assignedTo
+                      {taskDetails.assignedTo}
                     </p>
                   )}
                   {!taskDetails?.assignedTo && (
@@ -285,6 +290,7 @@ const TaskDetails: React.FC = () => {
                   />
                 )}
                 {taskDetails?.attachments &&
+                  taskDetails?.attachments.length &&
                   taskDetails.attachments.map((url) => (
                     <div key={url}>
                       <img
@@ -300,7 +306,9 @@ const TaskDetails: React.FC = () => {
                     </div>
                   ))}
 
-                {!taskDetails?.attachments && (
+                {(!taskDetails?.attachments ||
+                  (taskDetails.attachments &&
+                    !taskDetails.attachments.length)) && (
                   <p className="text-sm text-gray-text">
                     There's no attachments{" "}
                     <span className="font-bold text-btn-primary">
