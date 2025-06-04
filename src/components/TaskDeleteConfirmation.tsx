@@ -23,6 +23,7 @@ const TaskDeleteConfirmation: React.FC<TaskDeleteConfirmationProp> = ({
     cancelButtonRef.current?.focus();
   }, []);
 
+  // escape button close
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") onCancel();
@@ -35,12 +36,15 @@ const TaskDeleteConfirmation: React.FC<TaskDeleteConfirmationProp> = ({
   return (
     <div className="text-main fixed inset-0 z-50 flex items-center justify-center bg-black/30">
       <div className="min-w-90 bg-primary-bg p-4 rounded-xl shadow-lg flex flex-col gap-4">
-        <p className="text-main py-2 border-b-2 border-sidebar-selected">
+        <p className="text-main py-2 border-b-2 font-bold text-lg border-sidebar-selected">
           {title || "Delete Confirmation"}
         </p>
-        <p>
-          Are you sure you what to delete this{" "}
-          <span className="underline font-semibold">{id}</span> task
+        <p className="text-gray-text italic">
+          Are you sure you what to delete this:{" "}
+          <span className="underline font-semibold text-main">
+            {id || "#123"}
+          </span>{" "}
+          task
         </p>
 
         <div className="flex gap-3 justify-end">
