@@ -1,5 +1,8 @@
 import React, { type ReactNode } from "react";
-import { colorClassMapTaskStatus } from "../constants/colorMap";
+import {
+  colorClassMapTaskStatus,
+  colorClassMapTaskStatusText,
+} from "../constants/colorMap";
 
 type HeadingCardProps = {
   icon: React.ReactNode;
@@ -18,13 +21,12 @@ const HeadingCard: React.FC<HeadingCardProps> = ({
   highlightText,
   heading,
   text,
-  color = "status-done",
+  color = "done",
   children,
   className = "",
 }) => {
-
   return (
-    <article className="rounded-3xl p-8 flex flex-col justify-center items-start gap-4 text-main bg-secondary-bg">
+    <article className="rounded-3xl p-6 flex flex-col justify-center items-start gap-4 text-main bg-secondary-bg">
       <div
         aria-hidden="true"
         className={`${colorClassMapTaskStatus[color]} p-1.5 rounded-full`}
@@ -33,9 +35,11 @@ const HeadingCard: React.FC<HeadingCardProps> = ({
           {icon}
         </span>
       </div>
-      <div className="flex flex-col justify-start items-start gap-1">
+      <div className={` flex flex-col justify-start items-start gap-1`}>
         <p
-          className={` text-sm bg-btn-secondary text-btn-primary font-semibold py-0.5 px-2 rounded-lg`}
+          className={`${colorClassMapTaskStatus[`${color}_secondary`]} ${
+            colorClassMapTaskStatusText[color]
+          } text-sm bg-btn-secondary text-btn-primary font-semibold py-0.5 px-2 rounded-lg`}
         >
           {highlightText}
         </p>
