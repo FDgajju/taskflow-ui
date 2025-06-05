@@ -12,7 +12,7 @@ import HeadingCard from "../components/HeadingCard";
 import type { TaskT } from "../types/task";
 import { apiEndpoint } from "../constants/env";
 import ButtonLink from "../components/ButtonLink";
-import { getFormattedDateDD_MM_YYYY } from "../utils/getFormatedDate";
+import { prettyDate } from "../utils/getFormatedDate";
 import TaskDeleteConfirmation from "../components/TaskDeleteConfirmation";
 import H2 from "../components/H2";
 import DisplayImage from "../components/DisplayImage";
@@ -24,21 +24,21 @@ import {
 
 const DUMMY_DEPS: Partial<TaskT>[] = [
   {
-    _id: "683bfae006aefc8a75ebf93b",
+    _id: "68407e35d0934cf42ef8eec7",
     title: "This is Dummy Deps",
     priority: "low",
     status: "todo",
-    deadLine: getFormattedDateDD_MM_YYYY(new Date("2025-06-08").toISOString()),
+    deadLine: "2025-07-10",
 
     tag: "string",
     workspace: "string",
   },
   {
-    _id: "683bfaf506aefc8a75ebf93d",
+    _id: "68407e35d0934cf42ef8eec3",
     title: "This is Dummy Deps 2",
     priority: "high",
     status: "inprogress",
-    deadLine: getFormattedDateDD_MM_YYYY(new Date("2025-06-08").toISOString()),
+    deadLine: "2025-06-10",
 
     tag: "string",
     workspace: "string",
@@ -184,16 +184,12 @@ const TaskDetails: React.FC = () => {
             <div className="bg-secondary-bg flex flex-wrap gap-3 p-2 text-xs rounded-3xl">
               <p className=" border-gray-text py-0.5 px-1.5 rounded-lg text-gray-text font-semibold">
                 Created:{" "}
-                <span>
-                  {getFormattedDateDD_MM_YYYY(String(taskDetails?.createdAt))}
-                </span>
+                <span>{prettyDate(String(taskDetails?.createdAt))}</span>
               </p>
               {taskDetails?.updatedAt !== taskDetails?.createdAt && (
                 <p className=" border-gray-text py-0.5 px-1.5 rounded-md text-gray-text font-semibold">
                   Updated:{" "}
-                  <span>
-                    {getFormattedDateDD_MM_YYYY(String(taskDetails?.updatedAt))}
-                  </span>
+                  <span>{prettyDate(String(taskDetails?.updatedAt))}</span>
                 </p>
               )}
             </div>
@@ -208,7 +204,7 @@ const TaskDetails: React.FC = () => {
                 <div className="flex flex-col justify-evenly">
                   <p className="text-xl font-semibold">Due Date</p>
                   <p className="text-sm text-gray-text font-medium italic">
-                    {getFormattedDateDD_MM_YYYY(taskDetails?.deadLine || "")}
+                    {prettyDate(taskDetails?.deadLine || "")}
                   </p>
                 </div>
               </div>
@@ -279,7 +275,7 @@ const TaskDetails: React.FC = () => {
             <div className="py-2">
               <H2 text="Attachments" />
 
-              <div className="flex gap-2 justify-center w-full items-center p-4 overflow-x-auto bg-secondary-bg rounded-3xl">
+              <div className="flex flex-nowrap gap-2 justify-start w-full items-center p-4 overflow-x-auto bg-secondary-bg rounded-3xl">
                 {showImage && (
                   <DisplayImage
                     handleClose={() => {
@@ -296,7 +292,7 @@ const TaskDetails: React.FC = () => {
                       <img
                         src={url}
                         key={url}
-                        className="h-[300px] rounded-2xl cursor-pointer hover:border-2 hover:border-btn-primary transition-all duration-100 p-0.5"
+                        className="h-[300px] min-w-[200px] object-cover rounded-2xl cursor-pointer hover:border-2 hover:border-btn-primary/50 transition-all duration-100 p-0.5"
                         alt="Attachment Image"
                         onClick={() => {
                           setShowImage(true);
