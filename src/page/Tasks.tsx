@@ -21,7 +21,7 @@ const Tasks: React.FC = () => {
         <TaskStatusNav handleTabChange={(tab: string) => setActiveTab(tab)} />
 
         <div className="my-5">
-          <TaskTable status={activeStatus} />
+          <TaskTable queryString={`status=${activeStatus}`} />
         </div>
       </section>
     </div>
