@@ -5,3 +5,6 @@ export const PRIORITY_MAP = {
 	low: "low",
 	medium: "medium",
 };
+
+export const PRIORITIES_DD = ["Select Priority", "low", "high", "medium"];
+export const STATUS_LIST = ["Select Status", "done", "inprogress", "overdue", "todo"];
