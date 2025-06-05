@@ -27,7 +27,10 @@ const DisplayImage: React.FC<DisplayImageProp> = ({ url, handleClose }) => {
       onClick={handleClose}
       className="fixed inset-0 z-50 flex items-center  justify-center backdrop-blur-md bg-black/50"
     >
-      <div className="p-4 flex flex-col rounded-3xl border-2 bg-secondary-bg/20 border-sidebar-selected/30 gap-2">
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="p-4 flex flex-col rounded-3xl border-2 bg-secondary-bg/20 border-sidebar-selected/30 gap-2"
+      >
         <button
           ref={cancelButtonRef}
           onClick={handleClose}
