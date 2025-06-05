@@ -7,7 +7,7 @@ import HightedText from "./HightedText";
 import { MdDeleteOutline, MdOutlineModeEdit } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { apiEndpoint } from "../constants/env";
-import { getFormattedDate } from "../utils/getFormatedDate";
+import { prettyDate } from "../utils/getFormatedDate";
 import axios, { AxiosError } from "axios";
 import type { TaskT } from "../types/task";
 import toast from "react-hot-toast";
@@ -17,10 +17,10 @@ import TaskDeleteConfirmation from "./TaskDeleteConfirmation";
 // const LoadingHandAnimation = "/animation_file/loading_hand.lottie";
 
 export type TaskTableProps = {
-  status: string | null;
+  queryString?: string | null;
 };
 
-const TaskTable: React.FC<TaskTableProps> = ({ status = "all" }) => {
+const TaskTable: React.FC<TaskTableProps> = ({ queryString = null }) => {
   const [data, setData] = useState<TaskT[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [deleteConfirmation, setDeleteConfirmation] = useState<boolean>(false);
@@ -30,7 +30,9 @@ const TaskTable: React.FC<TaskTableProps> = ({ status = "all" }) => {
   // fetching data
   const fetchData = useCallback(async () => {
     try {
-      const resp = await axios.get(`${apiEndpoint}/task?status=${status}`);
+      const resp = await axios.get(
+        `${apiEndpoint}/task?${queryString ? queryString : ""}`
+      );
       if (String(resp.status).startsWith("2")) setData(resp.data.data);
       else if (String(resp.status).startsWith("4"))
         toast.error(resp.data.error);
@@ -45,7 +47,7 @@ const TaskTable: React.FC<TaskTableProps> = ({ status = "all" }) => {
     } finally {
       setLoading(false);
     }
-  }, [status]);
+  }, [queryString]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -55,7 +57,7 @@ const TaskTable: React.FC<TaskTableProps> = ({ status = "all" }) => {
     fetchData();
 
     return () => controller.abort();
-  }, [status, fetchData]);
+  }, [queryString, fetchData]);
 
   // delete confirm
   const handleDeleteConfirm = () => {
@@ -152,7 +154,7 @@ const TaskTable: React.FC<TaskTableProps> = ({ status = "all" }) => {
                   }
                 </td>
                 <td className="text-left px-4 py-4">
-                  {getFormattedDate(task.deadLine)}
+                  {prettyDate(task.deadLine)}
                 </td>
                 <td className="text-left px-4 py-4">{task.tag || "-"}</td>
                 <td className="text-left px-4 py-4">
@@ -200,7 +202,7 @@ const TaskTable: React.FC<TaskTableProps> = ({ status = "all" }) => {
           className="text-main text-center text-lg font-medium p-10 mt-20"
         >
           Data is empty for status{" "}
-          <span className="font-bold underline">{status}</span>
+          <span className="font-bold underline">{"Try to change filter"}</span>
         </h3>
       )}
     </article>
