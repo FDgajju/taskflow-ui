@@ -24,3 +24,29 @@ export type TaskT = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type TaskFilter = {
+  _id?: string;
+  priority?: TaskPriority;
+  title?: string;
+  search?: string;
+  status?: TaskStatus;
+  deadLine?: string;
+  sort?: number;
+
+  tag?: string;
+  workspace?: string;
+
+  createdBy?: string;
+  updatedBy?: string;
+  assignedTo?: string;
+  assignedBy?: string;
+
+  createdAt?: Date;
+  updatedAt?: Date;
+
+  deadLine_from?: string;
+  deadLine_to?: string;
+  created_from?: string;
+  created_to?: string;
+};
