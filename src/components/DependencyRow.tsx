@@ -7,13 +7,13 @@ import {
   colorClassMapTaskStatus,
   colorClassMapTaskStatusText,
 } from "../constants/colorMap";
+import { prettyDate } from "../utils/getFormatedDate";
 
 type DependencyRowProp = {
   depsData: Partial<TaskT>;
 };
 
 const DependencyRow: React.FC<DependencyRowProp> = ({ depsData }) => {
-
   return (
     <NavLink
       to={`/task/${depsData._id}`}
@@ -40,7 +40,9 @@ const DependencyRow: React.FC<DependencyRowProp> = ({ depsData }) => {
 
       <div className="w-2/8 flex flex-col items-start justify-center">
         <span className="text-xs text-gray-text">Due</span>
-        <span className="text-sm">{depsData.deadLine}</span>
+        <span className="text-sm">
+          {prettyDate(depsData?.deadLine as string)}
+        </span>
       </div>
 
       <p className="w-1/8 flex items-center justify-end hover:text-btn-primary p-2">
