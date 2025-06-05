@@ -285,7 +285,7 @@ const EditTaskForm: React.FC = () => {
               <ButtonLink
                 to="/tasks"
                 type="button"
-                onClick={() => {}}
+                // onClick={() => {}}
                 style="bg-btn-secondary text-btn-primary"
                 text="Cancel"
               />

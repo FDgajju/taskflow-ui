@@ -153,7 +153,7 @@ const Dashboard: React.FC = () => {
         <div className="flex flex-col gap-4">
           <H2 text="Task List" />
 
-          <TaskTable status={activeListStatus} />
+          <TaskTable queryString={`status=${activeListStatus}`} />
         </div>
       </section>
     </div>
