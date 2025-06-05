@@ -2,12 +2,17 @@ import type React from "react";
 import SearchIcon from "/search.svg"; // Assuming you have a search icon
 import Button from "./Button";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import FilterModel from "./FilterModel";
 
 type PageHeaderProps = {
   header: string;
+  removeFilter?: boolean;
 };
 
-const PageHeader: React.FC<PageHeaderProps> = ({ header }) => {
+const PageHeader: React.FC<PageHeaderProps> = ({ header, removeFilter }) => {
+  const [filterModel, setFilterModel] = useState<boolean>(false);
+
   return (
     <div className="w-4/4 flex justify-start text-main">
       <div className="w-4/4 flex flex-col justify-start gap-8">
@@ -29,16 +34,22 @@ const PageHeader: React.FC<PageHeaderProps> = ({ header }) => {
                 <img src={SearchIcon} alt="search" className="h-4" />
               </button>
             </form>
-
             <Button type="button" onClick={() => {}}>
               <Link to="/add-new-task">Add Task</Link>
             </Button>
-            <Button
-              type="button"
-              text="Filter"
-              style="bg-btn-secondary text-btn-secondary-text"
-              onClick={() => {}}
-            />
+            {filterModel && (
+              <FilterModel handleClose={() => setFilterModel(false)} />
+            )}
+            {!removeFilter && (
+              <Button
+                type="button"
+                text="Filter"
+                style="bg-btn-secondary text-btn-secondary-text"
+                onClick={() => {
+                  setFilterModel(true);
+                }}
+              />
+            )}
           </div>
         </div>
       </div>
