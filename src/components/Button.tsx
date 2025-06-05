@@ -5,12 +5,17 @@ type ButtonProps = {
   type: "button" | "submit" | "reset";
   style?: string;
   className?: string;
-  onClick: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onClick?: (e: any) => void;
   children?: React.ReactNode;
+  disabled?: boolean;
 };
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ text, type, style, className, onClick, children }, ref) => {
+  (
+    { text, type, style, className, onClick, children, disabled = false },
+    ref
+  ) => {
     return (
       <button
         ref={ref}
@@ -19,7 +24,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           style || className
         }`}
         onClick={onClick}
-        // disabled={true}
+        disabled={disabled}
       >
         {text || children || "Submit"}
       </button>

@@ -6,7 +6,7 @@ type ButtonLinkProps = {
   type: "button" | "submit" | "reset";
   style?: string;
   className?: string;
-  onClick: () => void;
+  // onClick?: () => void;
   to: string;
 };
 
@@ -15,7 +15,7 @@ const ButtonLink: React.FC<ButtonLinkProps> = ({
   type,
   style,
   className,
-  onClick,
+  // onClick,
   to,
 }) => {
   return (
@@ -25,7 +25,7 @@ const ButtonLink: React.FC<ButtonLinkProps> = ({
       className={`flex justify-center items-center align-middle bg-btn-primary py-2 px-4 font-bold rounded-lg text-sm ${
         style || className
       }`}
-      onClick={onClick}
+      // onClick={onClick}
     >
       {text || "Submit"}
     </Link>
