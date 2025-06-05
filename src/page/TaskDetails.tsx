@@ -3,7 +3,7 @@ import { LuCalendar1, LuClipboardList } from "react-icons/lu";
 import { useNavigate, useParams } from "react-router-dom";
 import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
-import { FaExclamation } from "react-icons/fa";
+import { FaExclamation, FaPlus } from "react-icons/fa";
 import { CgTag } from "react-icons/cg";
 import { HiMiniFaceSmile } from "react-icons/hi2";
 
@@ -21,29 +21,6 @@ import {
   colorClassMapTaskPriority,
   colorClassMapTaskPriorityText,
 } from "../constants/colorMap";
-
-const DUMMY_DEPS: Partial<TaskT>[] = [
-  {
-    _id: "68407e35d0934cf42ef8eec7",
-    title: "This is Dummy Deps",
-    priority: "low",
-    status: "todo",
-    deadLine: "2025-07-10",
-
-    tag: "string",
-    workspace: "string",
-  },
-  {
-    _id: "68407e35d0934cf42ef8eec3",
-    title: "This is Dummy Deps 2",
-    priority: "high",
-    status: "inprogress",
-    deadLine: "2025-06-10",
-
-    tag: "string",
-    workspace: "string",
-  },
-];
 
 const TaskDetails: React.FC = () => {
   const [data, setData] = useState<Partial<TaskT>>({});
@@ -275,7 +252,7 @@ const TaskDetails: React.FC = () => {
             <div className="py-2">
               <H2 text="Attachments" />
 
-              <div className="flex flex-nowrap gap-2 justify-start w-full items-center p-4 overflow-x-auto bg-secondary-bg rounded-3xl">
+              <div className="flex flex-nowrap gap-2 justify-center w-full items-center p-4 overflow-x-auto bg-secondary-bg rounded-3xl">
                 {showImage && (
                   <DisplayImage
                     handleClose={() => {
@@ -285,9 +262,9 @@ const TaskDetails: React.FC = () => {
                     url={imageUrl}
                   />
                 )}
-                {taskDetails?.attachments &&
-                  taskDetails?.attachments.length &&
-                  taskDetails.attachments.map((url) => (
+                {Boolean(taskDetails?.attachments) &&
+                  taskDetails?.attachments?.length !== 0 &&
+                  taskDetails?.attachments?.map((url) => (
                     <div key={url}>
                       <img
                         src={url}
@@ -319,10 +296,19 @@ const TaskDetails: React.FC = () => {
             <div className="py-2">
               <H2 text="Dependencies" />
               <div className="flex flex-col gap-1 py-2">
-                {DUMMY_DEPS &&
-                  DUMMY_DEPS.map((dep) => (
+                {taskDetails?.dependenciesList?.length !== 0 &&
+                  taskDetails?.dependenciesList?.map((dep) => (
                     <DependencyRow key={dep._id} depsData={dep} />
                   ))}
+                {Boolean(taskDetails?.dependenciesList) &&
+                  taskDetails?.dependenciesList?.length === 0 && (
+                    <div className="bg-secondary-bg rounded-3xl p-4 flex flex-col gap-2">
+                      <p className="font-semibold">Add dependencies</p>
+                      <p className="bg-gray-text/30 p-2 flex justify-center hover:scale-101 transition-all ease-in-out duration-500 rounded-md text-main/70">
+                        <FaPlus />
+                      </p>
+                    </div>
+                  )}
               </div>
             </div>
           </div>

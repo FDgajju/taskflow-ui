@@ -19,7 +19,7 @@ export type TaskT = {
   assignedBy: string;
   comments: string;
   attachments: string[];
-  dependencies: TaskT[];
+  dependenciesList: TaskT[];
 
   createdAt: Date;
   updatedAt: Date;
