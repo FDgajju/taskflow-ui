@@ -19,7 +19,11 @@ export type TaskT = {
   assignedBy: string;
   comments: string;
   attachments: string[];
+  dependsOn: string[];
   dependenciesList: TaskT[];
+
+  slug?: string;
+  ticket?: string;
 
   createdAt: Date;
   updatedAt: Date;
@@ -44,6 +48,9 @@ export type TaskFilter = {
 
   createdAt?: Date;
   updatedAt?: Date;
+
+  slug?: string;
+  ticket?: string;
 
   deadLine_from?: string;
   deadLine_to?: string;
