@@ -1,12 +1,14 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { LuCalendar1, LuClipboardList } from "react-icons/lu";
+import React, {
+  // useCallback,
+  // useEffect,
+  useMemo,
+  useState,
+  type ChangeEvent,
+} from "react";
+import { LuClipboardList } from "react-icons/lu";
 import { useNavigate, useParams } from "react-router-dom";
 import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
-import { FaExclamation, FaPlus } from "react-icons/fa";
-import { CgTag } from "react-icons/cg";
-import { HiMiniFaceSmile } from "react-icons/hi2";
-
 import Button from "../components/Button";
 import HeadingCard from "../components/HeadingCard";
 import type { TaskT } from "../types/task";
@@ -17,104 +19,146 @@ import TaskDeleteConfirmation from "../components/TaskDeleteConfirmation";
 import H2 from "../components/H2";
 import DisplayImage from "../components/DisplayImage";
 import DependencyRow from "../components/DependencyRow";
-import {
-  colorClassMapTaskPriority,
-  colorClassMapTaskPriorityText,
-} from "../constants/colorMap";
+import { MdOutlineAddLink } from "react-icons/md";
+import { debounce } from "../utils/debounce";
+import DebounceTasks from "../components/DebounceTasks";
+import TaskMetaSection from "../components/TaskMetaSection";
+import { FaPlus } from "react-icons/fa";
+import useTaskDetails from "../hooks/useTaskDetails";
+
+const formFullDivStyle = "flex flex-col gap-2";
+const formInputStyle =
+  "w-full bg-input-bg p-4 rounded-2xl  focus:outline-none focus:ring-1 focus:ring-btn-primary transition-all ease duration-300";
 
 const TaskDetails: React.FC = () => {
-  const [data, setData] = useState<Partial<TaskT>>({});
-  const [loading, setLoading] = useState<boolean>(true);
+  const { id } = useParams();
+  const {
+    task,
+    removeDependency,
+    loading,
+    deleteTask,
+    deleting,
+    addDependency,
+  } = useTaskDetails(id as string);
+  const dependencies = useMemo<Partial<TaskT>[]>(
+    () =>
+      task && Array.isArray(task.dependenciesList) ? task.dependenciesList : [],
+    [task]
+  );
+  // const [loading, setLoading] = useState<boolean>(true);
   const [deleteConfirmation, setDeleteConfirmation] = useState<boolean>(false);
-  const [deleting, setDeleting] = useState<boolean>(false);
   const [taskDeleteId, setTaskDeleteId] = useState<string>("");
   const [showImage, setShowImage] = useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>("");
-  const { id } = useParams();
+  const [showDepsInput, setDepsInput] = useState<boolean>(false);
+  const [debounceLoading, setDebounceLoading] = useState<boolean>(false);
+  const [debounceDataContainerShow, setDebounceDataContainerShow] =
+    useState<boolean>(false);
+  const [debouncedTasks, setDebouncedTasks] = useState<TaskT[]>([]);
   const navigate = useNavigate();
 
-  const taskDetails = useMemo<Partial<TaskT> | null>(() => data, [data]);
+  const taskDetails = useMemo<Partial<TaskT> | null>(
+    () => (task && Object.keys(task).length > 0 ? task : null),
+    [task]
+  );
 
-  const fetchData = useCallback(async () => {
-    try {
-      const resp = await axios(`${apiEndpoint}/task/${id}`);
-      if (String(resp.status).startsWith("2")) setData(resp.data.data);
-      else if (String(resp.status).startsWith("4")) {
-        toast.error(resp.data.error);
-        navigate("/tasks");
-      } else {
-        toast.error("Something unexpected happen, please contact admin!");
-        navigate("/tasks");
-      }
-    } catch (error) {
-      console.log(error);
-      if (error instanceof AxiosError) {
-        toast.error(error.response?.data.error || error.message);
-      } else {
-        toast.error("An unknown error occurred, please contact admin!");
-      }
+  const debouncedSearch = useMemo(
+    () =>
+      debounce(async (query, excludeIds) => {
+        setDebouncedTasks([]);
+        try {
+          if (query.length) {
+            const resp = await axios.get(
+              `${apiEndpoint}/task?search=${query}&exclude=${excludeIds}`
+            );
 
-      navigate("/tasks");
-    } finally {
-      setLoading(false);
+            console.log(resp.data.data);
+            if (String(resp.status).startsWith("2")) {
+              setTimeout(() => {
+                setDebounceLoading(false);
+                setDebouncedTasks(resp.data.data);
+              }, 500);
+            }
+            if (String(resp.status).startsWith("4"))
+              toast.error(resp.data.error);
+            else if (String(resp.status).startsWith("5"))
+              toast.error(
+                resp?.data?.error ||
+                  resp?.data?.error?.message ||
+                  "Something unexpected happen, please contact admin!"
+              );
+          }
+        } catch (error) {
+          console.log(error);
+          if (error instanceof AxiosError) {
+            toast.error(error.response?.data.error || error.message);
+          } else {
+            toast.error("An unknown error occurred, please contact admin!");
+          }
+        }
+        console.log("debounce query", query);
+      }, 500),
+    []
+  );
+
+  // handle debounce search
+
+  const handleDebounceSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    const excludeIdsArr = [
+      // mapping existing deps with it's id
+      ...(taskDetails?.dependenciesList?.map((dep) => dep._id) ?? []),
+      // adding current task
+      taskDetails?._id,
+    ].filter(Boolean);
+    const excludeIds = excludeIdsArr.join(",");
+
+    if (e.target.value.length) {
+      setDebounceDataContainerShow(true);
+      setDebounceLoading(true);
+      debouncedSearch(e.target.value, excludeIds);
+    } else {
+      setDebounceDataContainerShow(false);
+      setDebounceLoading(false);
     }
-  }, [id, navigate]);
+  };
 
-  useEffect(() => {
-    const controller = new AbortController();
-    fetchData();
-    return () => controller.abort();
-  }, [id, fetchData]);
+  const handleSelectDependency = async (id: string) => {
+    addDependency(id);
 
-  // handle delete confirm
-  const handleDeleteConfirm = async () => {
-    setDeleting(true);
-    try {
-      const resp = await axios.delete(`${apiEndpoint}/task/${id}`);
-      if (String(resp.status).startsWith("2")) {
-        toast.success(`Task deleted: ${taskDetails?.title}`);
-        setTimeout(() => {
-          navigate("/tasks");
-        }, 500);
-      } else if (String(resp.status).startsWith("4"))
-        toast.error(resp.data.error);
-      else toast.error("Something unexpected happen, please contact admin!");
-    } catch (error) {
-      console.log(error);
-      if (error instanceof AxiosError) {
-        toast.error(error.response?.data.error || error.message);
-      } else {
-        toast.error("An unknown error occurred, please contact admin!");
-      }
-    } finally {
-      setTimeout(() => {
-        setDeleting(false);
-        setTaskDeleteId("");
-        setDeleteConfirmation(false);
-      }, 500);
-    }
+    setDepsInput(false);
+    setDebounceLoading(false);
+    setDebounceDataContainerShow(false);
+    setDebouncedTasks([]);
+  };
+
+  const handleUnlinkDependency = async (id: string) => {
+    removeDependency(id);
   };
 
   return (
     <section className="w-full flex flex-col justify-center items-center">
-      {loading && <span>Loading...</span>}
-      {!loading && (
-        <div className="w-3/4 p-4 flex flex-col">
-          {/* heading */}
-          <div className="flex justify-between align-middle items-center">
-            <h2 className=" text-3xl font-bold text-main py-5">Overview</h2>
-            <Button
-              type="button"
-              onClick={() => {
-                navigate("/tasks");
-              }}
-              style="bg-btn-secondary"
-            >
-              <span className="text-btn-primary">Go Back</span>
-            </Button>
-          </div>
+      <div className="w-3/4 p-4 flex flex-col ">
+        {/* heading */}
+        <div className="flex justify-between align-middle items-center">
+          <h2 className=" text-3xl font-bold text-main py-5">Overview</h2>
+          <Button
+            type="button"
+            onClick={() => {
+              navigate("/tasks");
+            }}
+            style="bg-btn-secondary"
+          >
+            <span className="text-btn-primary">Go Back</span>
+          </Button>
+        </div>
 
+        {/* loading */}
+        {loading && !taskDetails && <span>Loading...</span>}
+
+        {/* if not loading */}
+        {!loading && !!taskDetails?._id && (
           <div className="flex flex-col gap-2">
+            {/* delete action */}
             {deleteConfirmation && (
               <TaskDeleteConfirmation
                 deleting={deleting}
@@ -122,9 +166,8 @@ const TaskDetails: React.FC = () => {
                 onCancel={() => {
                   toast.success("Task delete cancelled ❌");
                   setDeleteConfirmation(false);
-                  setTaskDeleteId("");
                 }}
-                onConfirm={handleDeleteConfirm}
+                onConfirm={deleteTask}
               />
             )}
 
@@ -171,88 +214,14 @@ const TaskDetails: React.FC = () => {
               )}
             </div>
 
-            {/* main grid */}
-            <article className="pt-2 grid grid-cols-1 lg:grid-cols-2 gap-3 ">
-              {/* due date */}
-              <div className="bg-secondary-bg p-3 rounded-3xl flex gap-5">
-                <div className="p-4 flex justify-center items-center bg-btn-secondary rounded-2xl text-btn-primary">
-                  <LuCalendar1 className="text-3xl" />
-                </div>
-                <div className="flex flex-col justify-evenly">
-                  <p className="text-xl font-semibold">Due Date</p>
-                  <p className="text-sm text-gray-text font-medium italic">
-                    {prettyDate(taskDetails?.deadLine || "")}
-                  </p>
-                </div>
-              </div>
-
-              {/* priority date */}
-              <div className="bg-secondary-bg p-3 rounded-3xl flex gap-5">
-                <div
-                  className={`${
-                    colorClassMapTaskPriority[
-                      `${taskDetails?.priority || "low"}_secondary`
-                    ]
-                  } ${
-                    colorClassMapTaskPriorityText[
-                      `${taskDetails?.priority || "low"}`
-                    ]
-                  } p-4 flex justify-center items-center bg-btn-secondary rounded-2xl text-btn-primary`}
-                >
-                  <FaExclamation className="text-3xl" />
-                </div>
-                <div className="flex flex-col justify-evenly">
-                  <p className="text-xl font-semibold">Priority</p>
-                  <p
-                    className={`${
-                      colorClassMapTaskPriorityText[
-                        taskDetails?.priority || "low"
-                      ]
-                    } text-sm text-gray-text font-medium italic font-semibold`}
-                  >
-                    {taskDetails?.priority}
-                  </p>
-                </div>
-              </div>
-
-              {/* priority date */}
-              <div className="bg-secondary-bg p-3 rounded-3xl flex gap-5">
-                <div className="p-4 flex justify-center items-center bg-btn-secondary rounded-2xl text-btn-primary">
-                  <CgTag className="text-3xl" />
-                </div>
-                <div className="flex flex-col justify-evenly">
-                  <p className="text-xl font-semibold">Tag</p>
-                  <p className="text-sm text-gray-text font-medium italic">
-                    {taskDetails?.tag}
-                  </p>
-                </div>
-              </div>
-              <div className="bg-secondary-bg p-3 rounded-3xl flex gap-5">
-                {/* will replace with original profile picture */}
-                <div className="p-4 flex justify-center items-center bg-btn-secondary rounded-2xl text-btn-primary">
-                  <HiMiniFaceSmile className="text-3xl" />
-                </div>
-                <div className="flex flex-col justify-evenly">
-                  <p className="text-xl font-semibold">Assignee</p>
-                  {taskDetails?.assignedTo && (
-                    <p className="text-sm text-gray-text font-medium italic">
-                      {taskDetails.assignedTo}
-                    </p>
-                  )}
-                  {!taskDetails?.assignedTo && (
-                    <p className="text-sm italic font-bold text-btn-primary">
-                      Assign Someone
-                    </p>
-                  )}
-                </div>
-              </div>
-            </article>
+            {/* main grid meta */}
+            <TaskMetaSection taskDetails={taskDetails} />
 
             {/* attachments */}
             <div className="py-2">
               <H2 text="Attachments" />
 
-              <div className="flex flex-nowrap gap-2 justify-center w-full items-center p-4 overflow-x-auto bg-secondary-bg rounded-3xl">
+              <div className="flex flex-nowrap gap-2 justify-start w-full items-center p-4 overflow-x-auto bg-secondary-bg rounded-3xl">
                 {showImage && (
                   <DisplayImage
                     handleClose={() => {
@@ -265,11 +234,11 @@ const TaskDetails: React.FC = () => {
                 {Boolean(taskDetails?.attachments) &&
                   taskDetails?.attachments?.length !== 0 &&
                   taskDetails?.attachments?.map((url) => (
-                    <div key={url}>
+                    <div key={url} className="min-w-[200px]">
                       <img
                         src={url}
                         key={url}
-                        className="h-[300px] min-w-[200px] object-cover rounded-2xl cursor-pointer hover:border-2 hover:border-btn-primary/50 transition-all duration-100 p-0.5"
+                        className="h-[300px] object-cover rounded-2xl cursor-pointer hover:border-2 hover:border-btn-primary/50 transition-all duration-100 p-0.5"
                         alt="Attachment Image"
                         onClick={() => {
                           setShowImage(true);
@@ -296,24 +265,51 @@ const TaskDetails: React.FC = () => {
             <div className="py-2">
               <H2 text="Dependencies" />
               <div className="flex flex-col gap-1 py-2">
-                {taskDetails?.dependenciesList?.length !== 0 &&
-                  taskDetails?.dependenciesList?.map((dep) => (
-                    <DependencyRow key={dep._id} depsData={dep} />
+                {dependencies?.length !== 0 &&
+                  dependencies?.map((dep) => (
+                    <DependencyRow
+                      key={dep._id}
+                      handleUnlinkDependency={handleUnlinkDependency}
+                      depsData={dep}
+                    />
                   ))}
-                {Boolean(taskDetails?.dependenciesList) &&
-                  taskDetails?.dependenciesList?.length === 0 && (
-                    <div className="bg-secondary-bg rounded-3xl p-4 flex flex-col gap-2">
-                      <p className="font-semibold">Add dependencies</p>
-                      <p className="bg-gray-text/30 p-2 flex justify-center hover:scale-101 transition-all ease-in-out duration-500 rounded-md text-main/70">
-                        <FaPlus />
-                      </p>
-                    </div>
-                  )}
+
+                {showDepsInput && (
+                  <div className="relative">
+                    {debounceDataContainerShow && (
+                      <DebounceTasks
+                        handleClick={handleSelectDependency}
+                        loading={debounceLoading}
+                        tasks={debouncedTasks}
+                      />
+                    )}
+                    <form className={`${formFullDivStyle} relative`}>
+                      <input
+                        onChange={handleDebounceSearch}
+                        // value={dependsOn}
+                        name="dependsOn"
+                        className={formInputStyle}
+                        type="text"
+                        id="t-depends"
+                        placeholder="Search dependency, by title or ticket id"
+                      />
+                      <MdOutlineAddLink className="absolute top-[50%] -translate-y-1/2 right-4.5 text-xl" />
+                    </form>
+                  </div>
+                )}
+                <div
+                  className="rounded-2xl p-1 flex flex-col"
+                  onClick={() => setDepsInput(true)}
+                >
+                  <p className="border-1 border-gray-text/20 hover:border-btn-primary/40 bg-gray-text/10 p-2 flex justify-center hover:scale-101 transition-all ease-in-out duration-500 rounded-md text-main/70">
+                    <FaPlus />
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </section>
   );
 };
