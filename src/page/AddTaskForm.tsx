@@ -6,14 +6,23 @@ import { RiFlagLine } from "react-icons/ri";
 import { FaRegUser } from "react-icons/fa";
 import { MdOutlineAddLink } from "react-icons/md";
 import Button from "../components/Button";
-import { Link, useNavigate } from "react-router-dom";
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
 import toast from "react-hot-toast";
 import axios, { AxiosError } from "axios";
 import { apiEndpoint } from "../constants/env";
 
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import type { TaskT } from "../types/task";
+import DebounceTasks from "../components/DebounceTasks";
+import { debounce } from "../utils/debounce";
+import DependencyRow from "../components/DependencyRow";
 
 const ButtonSubmitLoading = "/animation_file/button-loading.lottie";
 
@@ -32,18 +41,109 @@ const AddTaskForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
 
+  const [showDebounceTable, setShowDebounceTable] = useState<boolean>(false);
+
+  const [debounceList, setDebounceList] = useState<TaskT[]>([]);
+  const [debounceLoading, setDebounceLoading] = useState<boolean>(false);
+  const [selectedDependencies, setSelectedDependencies] = useState<TaskT[]>([]);
+  const [depInput, setDepsInput] = useState<string>("");
+
   const navigate = useNavigate();
 
+  // escape button close debounce tab
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") handleCloseDebounceTable();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // debounce
+  const debouncedSearch = useMemo(
+    () =>
+      debounce(async (query, excludeIds) => {
+        setDebounceList([]);
+        try {
+          if (query.length) {
+            const resp = await axios.get(
+              `${apiEndpoint}/task?search=${query}&exclude=${excludeIds}`
+            );
+
+            if (String(resp.status).startsWith("2")) {
+              setTimeout(() => {
+                setDebounceLoading(false);
+                setDebounceList(resp.data.data);
+              }, 200);
+            }
+            if (String(resp.status).startsWith("4"))
+              toast.error(resp.data.error);
+            else if (String(resp.status).startsWith("5"))
+              toast.error(
+                resp?.data?.error ||
+                  resp?.data?.error?.message ||
+                  "Something unexpected happen, please contact admin!"
+              );
+          }
+        } catch (error) {
+          console.log(error);
+          if (error instanceof AxiosError) {
+            toast.error(error.response?.data.error || error.message);
+          } else {
+            toast.error("An unknown error occurred, please contact admin!");
+          }
+        }
+      }, 500),
+    []
+  );
+
+  // on input change handle
   const handleOnchange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
 
-    setError((prev) => {
-      prev[name as string] = undefined;
-      return { ...prev };
-    });
-    setTaskData((task) => ({ ...task, [name]: value }));
+    if (name === "dependsOn" && !!value.trim()) {
+      setShowDebounceTable(true);
+      setDebounceLoading(true);
+      setDepsInput(value);
+      debouncedSearch(value, selectedDependencies.map((d) => d._id).join(","));
+    } else {
+      handleCloseDebounceTable();
+      setError((prev) => {
+        prev[name as string] = undefined;
+        return { ...prev };
+      });
+      setTaskData((task) => ({ ...task, [name]: value }));
+    }
+  };
+
+  const handleSelectDependency = (id: string) => {
+    const dep = debounceList.find((d) => d._id === id);
+
+    if (dep) {
+      setSelectedDependencies((prev) => [...prev, dep]);
+      if (taskData.dependsOn && Array.isArray(taskData.dependsOn))
+        setTaskData((task) => ({
+          ...task,
+          dependsOn: [...(taskData.dependsOn ?? []), dep._id],
+        }));
+      else
+        setTaskData((task) => ({
+          ...task,
+          dependsOn: [dep._id],
+        }));
+    }
+    handleCloseDebounceTable();
+  };
+
+  const handleCloseDebounceTable = () => {
+    setShowDebounceTable(false);
+    setDebounceLoading(false);
+    setDebounceList([]);
+    setDepsInput("");
   };
 
   // handle submit
@@ -60,12 +160,11 @@ const AddTaskForm: React.FC = () => {
 
     if (Object.keys(newError).length) {
       setError(newError);
-      setLoading(false)
+      setLoading(false);
       return toast.error("Please fill all the required fields!");
     } else {
       (async () => {
         try {
-          console.log(taskData);
           const resp = await axios.post(`${apiEndpoint}/task`, taskData);
 
           if (String(resp.status).startsWith("2"))
@@ -82,14 +181,28 @@ const AddTaskForm: React.FC = () => {
         } finally {
           setFadeOut(true);
           setTimeout(() => {
-            setLoading(false);
-            setError({});
-            setTaskData({});
+            handleClearState();
             navigate("/tasks");
           }, 500);
         }
       })();
     }
+  };
+
+  const handleUnlinkDependency = (id: string) => {
+    setSelectedDependencies((prev) => prev.filter((t) => t._id !== id));
+  };
+
+  const handleClearState = () => {
+    setTaskData({});
+    setError({});
+    setLoading(false);
+    setFadeOut(true);
+    setShowDebounceTable(false);
+    setDebounceList([]);
+    setDebounceLoading(false);
+    setSelectedDependencies([]);
+    setDepsInput("");
   };
 
   return (
@@ -243,20 +356,38 @@ const AddTaskForm: React.FC = () => {
           </div>
 
           <div className={`${formFullDivStyle} relative`}>
+            {showDebounceTable && (
+              <DebounceTasks
+                handleClose={handleCloseDebounceTable}
+                handleClick={handleSelectDependency}
+                loading={debounceLoading}
+                tasks={debounceList}
+              />
+            )}
+
             <label className={formLabelStyle} htmlFor="t-depends">
               Depends On
             </label>
+            {!!selectedDependencies.length &&
+              selectedDependencies.map((task) => (
+                <DependencyRow
+                  key={task._id}
+                  depsData={task}
+                  handleUnlinkDependency={handleUnlinkDependency}
+                />
+              ))}
+
             <div className="relative">
               <input
-                // onChange={handleOnchange("dependsOn")}
-                // value={dependsOn}
+                onChange={handleOnchange}
+                value={depInput || ""}
                 name="dependsOn"
                 className={formInputStyle}
                 type="text"
                 id="t-depends"
                 placeholder="Add Dependency"
               />
-              <MdOutlineAddLink className="absolute top-[50%] -translate-0 right-4.5 text-xl" />
+              <MdOutlineAddLink className="absolute top-[50%] -translate-1/2 right-2 text-xl" />
             </div>
           </div>
 
@@ -280,12 +411,16 @@ const AddTaskForm: React.FC = () => {
             )}
             <Button
               type="button"
-              onClick={() => {}}
+              disabled={fadeOut || loading}
+              onClick={() => {
+                handleClearState();
+                setTimeout(() => {
+                  navigate("/tasks");
+                }, 500);
+              }}
               style="bg-btn-secondary text-btn-primary "
             >
-              <Link className="text-btn-primary" to="/tasks">
-                Cancel
-              </Link>
+              <span className="text-btn-primary">Cancel</span>
             </Button>
           </div>
         </form>
