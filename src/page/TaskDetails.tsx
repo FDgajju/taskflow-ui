@@ -17,7 +17,6 @@ import ButtonLink from "../components/ButtonLink";
 import { prettyDate } from "../utils/getFormatedDate";
 import TaskDeleteConfirmation from "../components/TaskDeleteConfirmation";
 import H2 from "../components/H2";
-import DisplayImage from "../components/DisplayImage";
 import DependencyRow from "../components/DependencyRow";
 import { MdOutlineAddLink } from "react-icons/md";
 import { debounce } from "../utils/debounce";
@@ -25,6 +24,7 @@ import DebounceTasks from "../components/DebounceTasks";
 import TaskMetaSection from "../components/TaskMetaSection";
 import { FaPlus } from "react-icons/fa";
 import useTaskDetails from "../hooks/useTaskDetails";
+import Attachments from "../components/Attachments";
 
 const formFullDivStyle = "flex flex-col gap-2";
 const formInputStyle =
@@ -48,8 +48,6 @@ const TaskDetails: React.FC = () => {
   // const [loading, setLoading] = useState<boolean>(true);
   const [deleteConfirmation, setDeleteConfirmation] = useState<boolean>(false);
   const [taskDeleteId, setTaskDeleteId] = useState<string>("");
-  const [showImage, setShowImage] = useState<boolean>(false);
-  const [imageUrl, setImageUrl] = useState<string>("");
   const [showDepsInput, setDepsInput] = useState<boolean>(false);
   const [debounceLoading, setDebounceLoading] = useState<boolean>(false);
   const [debounceDataContainerShow, setDebounceDataContainerShow] =
@@ -218,52 +216,63 @@ const TaskDetails: React.FC = () => {
             <TaskMetaSection taskDetails={taskDetails} />
 
             {/* attachments */}
-            <div className="py-2">
+            {/* <div className="py-2">
               <H2 text="Attachments" />
 
-              <div className="flex flex-nowrap gap-2 justify-start w-full items-center p-4 overflow-x-auto bg-secondary-bg rounded-3xl">
-                {showImage && (
-                  <DisplayImage
-                    handleClose={() => {
-                      setShowImage(false);
-                      setImageUrl("");
-                    }}
-                    url={imageUrl}
-                  />
-                )}
-                {Boolean(taskDetails?.attachments) &&
-                  taskDetails?.attachments?.length !== 0 &&
-                  taskDetails?.attachments?.map((url) => (
-                    <div key={url} className="min-w-[200px]">
-                      <img
-                        src={url}
-                        key={url}
-                        className="h-[300px] object-cover rounded-2xl cursor-pointer hover:border-2 hover:border-btn-primary/50 transition-all duration-100 p-0.5"
-                        alt="Attachment Image"
-                        onClick={() => {
-                          setShowImage(true);
-                          setImageUrl(url);
-                        }}
-                      />
+              <div className="bg-secondary-bg rounded-3xl flex flex-col items-center p-4 gap-3 border-1 border-sidebar-selected">
+                {!!taskDetails?.attachments &&
+                  taskDetails?.attachments?.length !== 0 && (
+                    <div className="flex flex-nowrap gap-2 justify-start w-full items-center overflow-x-auto">
+                      {showImage && (
+                        <DisplayImage
+                          handleClose={() => {
+                            setShowImage(false);
+                            setImageUrl("");
+                          }}
+                          url={imageUrl}
+                        />
+                      )}
+                      {taskDetails?.attachments?.map((url) => (
+                        <div key={url} className="min-w-[200px]">
+                          <img
+                            src={url}
+                            key={url}
+                            className="h-[300px] object-cover rounded-2xl cursor-pointer hover:border-2 hover:border-btn-primary/50 transition-all duration-100 p-0.5"
+                            alt="Attachment Image"
+                            onClick={() => {
+                              setShowImage(true);
+                              setImageUrl(url);
+                            }}
+                          />
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  )}
 
-                {(!taskDetails?.attachments ||
-                  (taskDetails.attachments &&
-                    !taskDetails.attachments.length)) && (
-                  <p className="text-sm text-gray-text">
-                    There's no attachments{" "}
-                    <span className="font-bold text-btn-primary">
-                      Browse to upload
-                    </span>
-                  </p>
-                )}
+                <p className="text-sm text-gray-text">
+                  There's no attachments{" "}
+                  <input
+                    id="files"
+                    type="file"
+                    className="hidden"
+                    // onChange={handleChange}
+                  />
+                  <label
+                    htmlFor="files"
+                    className="cursor-pointer px-4 py-2 bg-btn-primary text-white rounded-xl font-semibold shadow hover:bg-btn-primary/90 transition"
+                  >
+                    Select File
+                  </label>
+                </p>
               </div>
+            </div> */}
+            <div>
+              <Attachments attachments={taskDetails.attachments || []} />
             </div>
 
             {/* dependencies */}
             <div className="py-2">
-              <H2 text="Dependencies" />
+              <H2 text="Dependencies" className="px-2" />
               <div className="flex flex-col gap-1 py-2">
                 {dependencies?.length !== 0 &&
                   dependencies?.map((dep) => (
