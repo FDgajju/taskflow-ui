@@ -153,7 +153,7 @@ const TaskDetails: React.FC = () => {
         </div>
 
         {/* loading */}
-        {loading && !taskDetails && <span>Loading...</span>}
+        {loading && <span>Loading...</span>}
 
         {/* if not loading */}
         {!loading && !!taskDetails?._id && (

@@ -7,15 +7,24 @@ import { FaRegUser } from "react-icons/fa";
 import { MdOutlineAddLink } from "react-icons/md";
 import Button from "../components/Button";
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
 import HightedText from "../components/HightedText";
 import { getFormattedDate } from "../utils/getFormatedDate";
-import ButtonLink from "../components/ButtonLink";
 import toast from "react-hot-toast";
 import axios, { AxiosError } from "axios";
 import { apiEndpoint } from "../constants/env";
 import type { TaskT } from "../types/task";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import useTaskDetails from "../hooks/useTaskDetails";
+import DebounceTasks from "../components/DebounceTasks";
+import { debounce } from "../utils/debounce";
+import DependencyRow from "../components/DependencyRow";
 
 const ButtonSubmitLoading = "/animation_file/button-loading.lottie";
 const LoadingHand = "/animation_file/loading_hand.lottie";
@@ -28,39 +37,81 @@ const formLabelStyle = "text-lg font-semibold";
 const EditTaskForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
-  const [currentTask, setCurrentTask] = useState<TaskT | null>(null);
+  const { task: currentTask, loading: loadingData } = useTaskDetails(
+    id as string
+  );
+
   const [updatedTask, setUpdatedTask] = useState<Partial<TaskT>>({});
   const [fadeOut, setFadeOut] = useState(false);
-  const [loadingData, setLoadingData] = useState(true);
   const [loadingSubmit, setLoadingSUbmit] = useState(false);
   const [error, setError] = useState<string>("");
+
+  const [showDebounceTable, setShowDebounceTable] = useState<boolean>(false);
+
+  const [debounceList, setDebounceList] = useState<TaskT[]>([]);
+  const [debounceLoading, setDebounceLoading] = useState<boolean>(false);
+  const [selectedDependencies, setSelectedDependencies] = useState<TaskT[]>([]);
+
+  // Update selectedDependencies when currentTask changes
+  useEffect(() => {
+    if (
+      currentTask?.dependenciesList &&
+      Array.isArray(currentTask.dependenciesList)
+    ) {
+      setSelectedDependencies(currentTask.dependenciesList as TaskT[]);
+    }
+  }, [currentTask]);
+
+  // escape button close debounce tab
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") handleCloseDebounceTable();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  const [depInput, setDepsInput] = useState<string>("");
+
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const controller = new AbortController();
+  const debouncedSearch = useMemo(
+    () =>
+      debounce(async (query, excludeIds) => {
+        setDebounceList([]);
+        try {
+          if (query.length) {
+            const resp = await axios.get(
+              `${apiEndpoint}/task?search=${query}&exclude=${excludeIds}`
+            );
 
-    (async () => {
-      try {
-        const resp = await axios.get(`${apiEndpoint}/task/${id}`);
-
-        if (String(resp.status).startsWith("2")) {
-          setCurrentTask(resp.data.data);
-          setTimeout(() => setLoadingData(false), 500);
-        } else if (String(resp.status).startsWith("4"))
-          return toast.error(resp.data.error);
-        else toast.error("Something unexpected happen, please contact admin!");
-      } catch (error) {
-        if (error instanceof AxiosError)
-          toast.error(
-            error.response?.data.message ||
-              "Error while fetching current task data"
-          );
-        else toast.error("Unexpected Error");
-      }
-    })();
-
-    return () => controller.abort();
-  }, [id]);
+            if (String(resp.status).startsWith("2")) {
+              setTimeout(() => {
+                setDebounceLoading(false);
+                setDebounceList(resp.data.data);
+              }, 200);
+            }
+            if (String(resp.status).startsWith("4"))
+              toast.error(resp.data.error);
+            else if (String(resp.status).startsWith("5"))
+              toast.error(
+                resp?.data?.error ||
+                  resp?.data?.error?.message ||
+                  "Something unexpected happen, please contact admin!"
+              );
+          }
+        } catch (error) {
+          console.log(error);
+          if (error instanceof AxiosError) {
+            toast.error(error.response?.data.error || error.message);
+          } else {
+            toast.error("An unknown error occurred, please contact admin!");
+          }
+        }
+      }, 500),
+    []
+  );
 
   // on change handles
   const handleOnchange = (
@@ -69,7 +120,16 @@ const EditTaskForm: React.FC = () => {
     setError("");
     const { name, value } = e.target;
 
-    setUpdatedTask((task) => ({ ...task, [name]: value }));
+    if (name === "dependsOn" && !!value.trim()) {
+      setShowDebounceTable(true);
+      setDebounceLoading(true);
+      setDepsInput(value);
+      debouncedSearch(value, selectedDependencies.map((d) => d._id).join(","));
+    } else {
+      handleCloseDebounceTable();
+      setError("");
+      setUpdatedTask((task) => ({ ...task, [name]: value }));
+    }
   };
 
   // on submit handle
@@ -104,14 +164,52 @@ const EditTaskForm: React.FC = () => {
       } finally {
         setFadeOut(true);
         setTimeout(() => {
-          setLoadingSUbmit(false);
-          setError("");
-          setCurrentTask(null);
-          setUpdatedTask({});
+          handleClearState();
           navigate("/tasks");
         }, 500);
       }
     })();
+  };
+
+  const handleSelectDependency = (id: string) => {
+    const dep = debounceList.find((d) => d._id === id);
+
+    if (dep) {
+      setSelectedDependencies((prev) => [...prev, dep]);
+      if (updatedTask.dependsOn && Array.isArray(updatedTask.dependsOn))
+        setUpdatedTask((task) => ({
+          ...task,
+          dependsOn: [...(updatedTask.dependsOn ?? []), dep._id],
+        }));
+      else
+        setUpdatedTask((task) => ({
+          ...task,
+          dependsOn: [dep._id],
+        }));
+    }
+    handleCloseDebounceTable();
+  };
+
+  const handleUnlinkDependency = (id: string) => {
+    setSelectedDependencies((prev) => prev.filter((t) => t._id !== id));
+  };
+
+  const handleCloseDebounceTable = () => {
+    setShowDebounceTable(false);
+    setDebounceLoading(false);
+    setDebounceList([]);
+    setDepsInput("");
+  };
+
+  const handleClearState = () => {
+    setUpdatedTask({});
+    setError("");
+    setFadeOut(true);
+    setShowDebounceTable(false);
+    setDebounceList([]);
+    setDebounceLoading(false);
+    setSelectedDependencies([]);
+    setDepsInput("");
   };
 
   return (
@@ -126,8 +224,13 @@ const EditTaskForm: React.FC = () => {
             {error}
           </div>
         )}
-        <h2 className=" text-3xl font-bold text-main py-5">Edit Task</h2>
-        <HightedText text={currentTask?._id as string} />
+        <div className="flex items-center justify-between">
+          <h2 className=" text-3xl font-bold text-main py-5">Edit Task</h2>
+          <HightedText
+            text={currentTask?.ticket as string}
+            className="bg-status-todo-secondary text-status-todo border-1 px-2 py-0.5"
+          />
+        </div>
         {loadingData && (
           <div className="w-full h-96 bg-gray-200 mt-30 rounded-4xl  flex justify-center items-center animate-pulse">
             <DotLottieReact className="z-10" autoplay loop src={LoadingHand} />
@@ -254,15 +357,36 @@ const EditTaskForm: React.FC = () => {
               <label className={formLabelStyle} htmlFor="t-depends">
                 Depends On
               </label>
-              <input
-                //   onChange={handleOnchange("")}
-                className={formInputStyle}
-                type="text"
-                id="t-depends"
-                placeholder="Add Dependency"
-                // defaultValue={updatedTask.assignedTo || currentTask?.tags}
-              />
-              <MdOutlineAddLink className="absolute top-[60%] right-4.5 text-xl" />
+
+              {showDebounceTable && (
+                <DebounceTasks
+                  tasks={debounceList}
+                  handleClick={handleSelectDependency}
+                  loading={debounceLoading}
+                  handleClose={handleCloseDebounceTable}
+                />
+              )}
+
+              {!!selectedDependencies.length &&
+                selectedDependencies.map((task) => (
+                  <DependencyRow
+                    depsData={task}
+                    handleUnlinkDependency={handleUnlinkDependency}
+                    key={task._id}
+                  />
+                ))}
+              <div className="relative">
+                <input
+                  onChange={handleOnchange}
+                  className={formInputStyle}
+                  type="text"
+                  id="t-depends"
+                  placeholder="Add Dependency"
+                  value={depInput || ""}
+                  name="dependsOn"
+                />
+                <MdOutlineAddLink className="absolute top-[50%] -translate-y-1/2 right-4.5 text-xl" />
+              </div>
             </div>
 
             <div className="flex justify-star gap-5">
@@ -282,13 +406,19 @@ const EditTaskForm: React.FC = () => {
                 </div>
               )}
 
-              <ButtonLink
-                to="/tasks"
+              <Button
                 type="button"
-                // onClick={() => {}}
+                disabled={fadeOut}
+                onClick={() => {
+                  handleClearState();
+                  setTimeout(() => {
+                    navigate("/tasks");
+                  }, 500);
+                }}
                 style="bg-btn-secondary text-btn-primary"
-                text="Cancel"
-              />
+              >
+                <span className="text-btn-primary">Cancel</span>
+              </Button>
             </div>
           </form>
         )}

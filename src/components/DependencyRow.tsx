@@ -33,6 +33,7 @@ const DependencyRow: React.FC<DependencyRowProp> = ({
     >
       <div className="p-2 w-3/8 flex items-center gap-3 font-semibold">
         <button
+          type="button"
           onClick={(e) => {
             e.stopPropagation();
             handleUnlinkDependency(depsData._id as string);

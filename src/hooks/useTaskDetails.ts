@@ -17,6 +17,9 @@ const useTaskDetails = (taskId: string) => {
       const resp = await axios(`${apiEndpoint}/task/${taskId}`);
       if (String(resp.status).startsWith("2")) {
         setTask(resp.data.data);
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
       } else {
         toast.error(resp.data.error || "Could not fetch task");
         navigate("/tasks");
@@ -30,8 +33,6 @@ const useTaskDetails = (taskId: string) => {
       }
 
       navigate("/tasks");
-    } finally {
-      setLoading(false);
     }
   }, [taskId, navigate]);
 
