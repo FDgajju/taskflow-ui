@@ -19,12 +19,13 @@ import { getFormattedDate } from "../utils/getFormatedDate";
 import toast from "react-hot-toast";
 import axios, { AxiosError } from "axios";
 import { apiEndpoint } from "../constants/env";
-import type { TaskT } from "../types/task";
+import type { DocumentT, TaskT } from "../types/task";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import useTaskDetails from "../hooks/useTaskDetails";
 import DebounceTasks from "../components/DebounceTasks";
 import { debounce } from "../utils/debounce";
 import DependencyRow from "../components/DependencyRow";
+import Attachments from "../components/Attachments";
 
 const ButtonSubmitLoading = "/animation_file/button-loading.lottie";
 const LoadingHand = "/animation_file/loading_hand.lottie";
@@ -212,6 +213,7 @@ const EditTaskForm: React.FC = () => {
     setDepsInput("");
   };
 
+  console.log(currentTask);
   return (
     <section className="w-full flex flex-col justify-center items-center">
       <div
@@ -353,6 +355,20 @@ const EditTaskForm: React.FC = () => {
               </div>
             </div>
 
+            {/* attachments */}
+
+            {currentTask && (
+              <div>
+                <Attachments
+                  attachedDocuments={
+                    currentTask?.attachedDocuments as DocumentT[]
+                  }
+                  taskId={id as string}
+                />
+              </div>
+            )}
+
+            {/* dependencies */}
             <div className={`${formFullDivStyle} relative`}>
               <label className={formLabelStyle} htmlFor="t-depends">
                 Depends On
