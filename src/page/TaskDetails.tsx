@@ -11,11 +11,11 @@ import axios, { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import Button from "../components/Button";
 import HeadingCard from "../components/HeadingCard";
-import type { TaskT } from "../types/task";
+import type { DocumentT, TaskT } from "../types/task";
 import { apiEndpoint } from "../constants/env";
 import ButtonLink from "../components/ButtonLink";
 import { prettyDate } from "../utils/getFormatedDate";
-import TaskDeleteConfirmation from "../components/TaskDeleteConfirmation";
+import TaskDeleteConfirmation from "../components/DeleteConfirmation";
 import H2 from "../components/H2";
 import DependencyRow from "../components/DependencyRow";
 import { MdOutlineAddLink } from "react-icons/md";
@@ -267,7 +267,12 @@ const TaskDetails: React.FC = () => {
               </div>
             </div> */}
             <div>
-              <Attachments attachments={taskDetails.attachments || []} />
+              <Attachments
+                taskId={id as string}
+                attachedDocuments={
+                  (taskDetails.attachedDocuments as DocumentT[]) || []
+                }
+              />
             </div>
 
             {/* dependencies */}
