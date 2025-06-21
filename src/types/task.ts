@@ -21,6 +21,7 @@ export type TaskT = {
   attachments: string[];
   dependsOn: string[];
   dependenciesList: TaskT[];
+  attachedDocuments?: DocumentT[];
 
   slug?: string;
   ticket?: string;
@@ -56,4 +57,18 @@ export type TaskFilter = {
   deadLine_to?: string;
   created_from?: string;
   created_to?: string;
+};
+
+export type DocumentT = {
+  originalname?: string;
+  show?: boolean;
+  name?: string;
+  path?: string;
+  type?: string;
+  url?: string;
+  _id?: string;
+  maskImageUrl?: string;
+
+  createdAt?: string;
+  updatedAt?: string;
 };
