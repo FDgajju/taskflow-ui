@@ -11,7 +11,7 @@ import { prettyDate } from "../utils/getFormatedDate";
 import axios, { AxiosError } from "axios";
 import type { TaskT } from "../types/task";
 import toast from "react-hot-toast";
-import TaskDeleteConfirmation from "./TaskDeleteConfirmation";
+import TaskDeleteConfirmation from "./DeleteConfirmation";
 // import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 // const LoadingHandAnimation = "/animation_file/loading_hand.lottie";
