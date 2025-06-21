@@ -39,3 +39,9 @@ export const prettyDate = (dt: string) => {
 
   return format(date, "do MMMM yyyy");
 };
+
+export const fnsFormattedDate = (dt: string) => {
+  const date = new Date(dt);
+
+  return format(date, "d MMMM yyyy, h:mm a");
+};
