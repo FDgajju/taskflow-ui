@@ -25,8 +25,6 @@ const Attachments: React.FC<{
 
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
-  console.log(attachedDocuments);
-
   useEffect(() => {
     setFiles(attachedDocuments.map((a: DocumentT) => ({ show: true, ...a })));
   }, [attachedDocuments]);
@@ -86,15 +84,18 @@ const Attachments: React.FC<{
 
   const handleOnFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target?.files?.[0]) {
-      setFiles((prev: DocumentT[]) => [
-        ...prev,
-        {
-          maskImageUrl: URL.createObjectURL(e.target.files![0]),
-          _id: `${Date.now()}-${Math.trunc(Math.random() * 1000)}`,
-          originalname: e.target.files![0].name,
-        },
-      ]);
-      uploadFile(e.target?.files?.[0]);
+      const file = e.target.files && e.target.files[0];
+      if (file) {
+        setFiles((prev: DocumentT[]) => [
+          ...prev,
+          {
+            maskImageUrl: URL.createObjectURL(file),
+            _id: `${Date.now()}-${Math.trunc(Math.random() * 1000)}`,
+            originalname: file.name,
+          },
+        ]);
+        uploadFile(file);
+      }
       e.target.value = "";
     } else {
       console.log("No file chosen");
