@@ -1,0 +1,21 @@
+import React from "react";
+import Sign from "../components/Sign";
+
+const BackgroundImagePath = "/bg1.png";
+
+const Login = () => {
+  return (
+    <div
+      className="w-full flex items-center justify-center"
+      style={{
+        backgroundImage: `url("${BackgroundImagePath}")`,
+        backgroundPosition: "center",
+        backgroundSize: "cover",
+      }}
+    >
+      <Sign type="signin" heading="Login to continue"></Sign>
+    </div>
+  );
+};
+
+export default Login;

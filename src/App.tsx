@@ -9,6 +9,9 @@ import EditTaskForm from "./page/EditTaskForm";
 import { Toaster } from "react-hot-toast";
 import TaskDetails from "./page/TaskDetails";
 import FilteredTasks from "./page/FilteredTasks";
+import Login from "./page/Signin";
+import Signup from "./page/Signup";
+import ResetPassword from "./page/ResetPassword";
 
 function App() {
   return (
@@ -17,6 +20,9 @@ function App() {
         <Toaster />
       </div>
       <Routes>
+        <Route path="/signin" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/resetpassword" element={<ResetPassword />} />
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/tasks" element={<Tasks />} />
