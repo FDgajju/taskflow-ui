@@ -3,9 +3,9 @@ import H2 from "./H2";
 import Button from "./Button";
 import { Link } from "react-router-dom";
 
-const TaskFlowIcon = "/public/menu.png";
-const GoogleIcon = "/public/Google_new.svg";
-const MsIcon = "/public/MS.svg";
+import TaskFlowIcon from "/menu.png";
+import GoogleIcon from "/Google_new.svg";
+import MsIcon from "/MS.svg";
 
 const Sign: React.FC<{ heading: string; type: "signin" | "signup" }> = ({
   heading,

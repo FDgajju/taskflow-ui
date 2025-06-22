@@ -1,7 +1,7 @@
 import React from "react";
 import Sign from "../components/Sign";
 
-const BackgroundImagePath = "/bg1.png";
+import BackgroundImagePath from "/bg1.png";
 
 const Login: React.FC = () => {
   return (
