@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import Button from "../components/Button";
 import H2 from "../components/H2";
 
-const BackgroundImagePath = "/bg1.png";
+import BackgroundImagePath from "/bg1.png";
 
-const TaskFlowIcon = "/public/menu.png";
+import TaskFlowIcon from "/menu.png";
 
 const ResetPassword: React.FC = () => {
   return (
