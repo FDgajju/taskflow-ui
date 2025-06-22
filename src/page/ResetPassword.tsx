@@ -7,7 +7,7 @@ const BackgroundImagePath = "/bg1.png";
 
 const TaskFlowIcon = "/public/menu.png";
 
-const ResetPassword = () => {
+const ResetPassword: React.FC = () => {
   return (
     <div
       className="w-full flex items-center justify-center"

@@ -3,7 +3,7 @@ import Sign from "../components/Sign";
 
 const BackgroundImagePath = "/bg1.png";
 
-const Login = () => {
+const Login: React.FC = () => {
   return (
     <div
       className="w-full flex items-center justify-center"
