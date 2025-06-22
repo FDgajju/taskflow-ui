@@ -139,7 +139,7 @@ const DocumentImage: React.FC<{
             const extIndex = name.lastIndexOf(".");
             const ext = extIndex !== -1 ? name.slice(extIndex) : "";
             const base = extIndex !== -1 ? name.slice(0, extIndex) : name;
-            return `${base.slice(0, 18)}...${base.slice(-3)}${ext}`;
+            return `${base.slice(0, 16)}...${base.slice(-3)}${ext}`;
           })()}
         </p>
         <span>
