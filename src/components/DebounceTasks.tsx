@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import type { TaskT } from "../types/task";
 import HightedText from "./HightedText";
 import {
@@ -10,9 +10,18 @@ import Loader from "./Loader";
 const DebounceTasks: React.FC<{
   tasks: TaskT[];
   handleClick: (id: string) => void;
-  handleClose?: () => void;
+  handleClose: () => void;
   loading: boolean;
 }> = ({ tasks, handleClick, loading, handleClose }) => {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") handleClose();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   return (
     <div className="absolute bottom-16 w-full z-10 max-h-80 flex flex-col gap-1">
       <button

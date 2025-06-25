@@ -8,7 +8,7 @@ import { MdOutlineAddLink } from "react-icons/md";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
 import {
-  useEffect,
+  // useEffect,
   useMemo,
   useState,
   type ChangeEvent,
@@ -49,17 +49,6 @@ const AddTaskForm: React.FC = () => {
   const [depInput, setDepsInput] = useState<string>("");
 
   const navigate = useNavigate();
-
-  // escape button close debounce tab
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") handleCloseDebounceTable();
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
 
   // debounce
   const debouncedSearch = useMemo(

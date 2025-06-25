@@ -63,16 +63,6 @@ const EditTaskForm: React.FC = () => {
     }
   }, [currentTask]);
 
-  // escape button close debounce tab
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") handleCloseDebounceTable();
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
-
   const [depInput, setDepsInput] = useState<string>("");
 
   const navigate = useNavigate();

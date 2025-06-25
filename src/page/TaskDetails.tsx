@@ -295,6 +295,12 @@ const TaskDetails: React.FC = () => {
                         handleClick={handleSelectDependency}
                         loading={debounceLoading}
                         tasks={debouncedTasks}
+                        handleClose={() => {
+                          setDebounceDataContainerShow(false);
+                          setDebouncedTasks([]);
+                          setDebounceLoading(false);
+                          setDepsInput(false);
+                        }}
                       />
                     )}
                     <form className={`${formFullDivStyle} relative`}>
