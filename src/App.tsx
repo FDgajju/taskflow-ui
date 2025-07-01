@@ -12,6 +12,8 @@ import FilteredTasks from "./page/FilteredTasks";
 import Login from "./page/Signin";
 import Signup from "./page/Signup";
 import ResetPassword from "./page/ResetPassword";
+import OtpVerification from "./page/OtpVerification";
+import FinishSettingAccount from "./page/FinishSettingAccount";
 
 function App() {
   return (
@@ -23,6 +25,11 @@ function App() {
         <Route path="/signin" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/resetpassword" element={<ResetPassword />} />
+        <Route path="/finishsetupaccount" element={<FinishSettingAccount />} />
+        <Route
+          path="/otpverification"
+          element={<OtpVerification maxDigit={6} />}
+        />
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/tasks" element={<Tasks />} />
