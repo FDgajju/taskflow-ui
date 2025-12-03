@@ -31,7 +31,7 @@ const DependencyRow: React.FC<DependencyRowProp> = ({
           navigate(`/task/${depsData._id}`);
         }, 500);
       }}
-      className="cursor-pointer bg-secondary-bg p-2 flex rounded-2xl text-main border-1 border-gray-text/20 hover:border-btn-primary/40"
+      className="cursor-pointer bg-secondary-bg p-2 flex rounded-2xl text-main border border-gray-text/20 hover:border-btn-primary/40"
     >
       <div className="p-2 w-3/8 flex items-center gap-3 font-semibold">
         <button

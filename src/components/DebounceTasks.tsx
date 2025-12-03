@@ -32,7 +32,7 @@ const DebounceTasks: React.FC<{
       >
         Close
       </button>
-      <div className="text-main border-1 border-btn-primary/50 drop-shadow-md drop-shadow-main/40 bg-secondary-bg rounded-xl p-3 flex flex-col gap-1  overflow-y-auto">
+      <div className="text-main border border-btn-primary/50 drop-shadow-md drop-shadow-main/40 bg-secondary-bg rounded-xl p-3 flex flex-col gap-1  overflow-y-auto">
         {!loading && !tasks.length && (
           <div className="flex justify-center items-center">
             <span className="text-gray-text font-bold">No data found!</span>
@@ -51,7 +51,7 @@ const DebounceTasks: React.FC<{
             <div
               onClick={() => handleClick(task._id)}
               key={task._id}
-              className="text-main font-semibold py-2 px-2 hover:rounded-md hover:bg-sidebar-selected flex gap-2 items-center justify-between text-sm border-b-1 border-main/20 transition-all duration-200"
+              className="text-main font-semibold py-2 px-2 hover:rounded-md hover:bg-sidebar-selected flex gap-2 items-center justify-between text-sm border-b border-main/20 transition-all duration-200"
             >
               <div className="flex items-center w-full gap-3 ">
                 <HightedText

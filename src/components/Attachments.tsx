@@ -158,13 +158,13 @@ const Attachments: React.FC<{
       {/** biome-ignore lint/a11y/useAriaPropsSupportedByRole: explanation */}
       <div
         aria-label="Drop file here to upload"
-        className="relative bg-secondary-bg rounded-3xl flex flex-col items-center p-4 gap-3 border-1 border-sidebar-selected"
+        className="relative bg-secondary-bg rounded-3xl flex flex-col items-center p-4 gap-3 border border-sidebar-selected"
         onDragOver={handleDragging}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
         {isDragging && (
-          <div className="absolute inset-0 bg-btn-secondary/65 border-1 border-btn-primary rounded-3xl flex items-center justify-center pointer-events-none text-btn-primary font-bold text-xl z-10">
+          <div className="absolute inset-0 bg-btn-secondary/65 border border-btn-primary rounded-3xl flex items-center justify-center pointer-events-none text-btn-primary font-bold text-xl z-10">
             Drop file here to upload!
           </div>
         )}

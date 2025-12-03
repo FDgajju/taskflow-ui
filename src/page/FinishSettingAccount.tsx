@@ -56,7 +56,7 @@ const FinishSettingAccount = () => {
               type="text"
               id="full-name"
               placeholder="Enter your full name"
-              className="text-main w-full text-sm p-2 outline-none border-1 border-main/50 focus:border-btn-primary rounded-sm"
+              className="text-main w-full text-sm p-2 outline-none border border-main/50 focus:border-btn-primary rounded-sm"
             />
           </div>
 
@@ -72,7 +72,7 @@ const FinishSettingAccount = () => {
               type="text"
               id="username"
               placeholder="Enter username"
-              className="text-main w-full text-sm p-2 outline-none border-1 border-main/50 focus:border-btn-primary rounded-sm"
+              className="text-main w-full text-sm p-2 outline-none border border-main/50 focus:border-btn-primary rounded-sm"
             />
           </div>
           {/*  */}
@@ -90,7 +90,7 @@ const FinishSettingAccount = () => {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   id="password"
-                  className="w-full text-main text-sm p-2 pr-10 outline-none border-1 border-main/50 focus:border-btn-primary rounded-sm"
+                  className="w-full text-main text-sm p-2 pr-10 outline-none border border-main/50 focus:border-btn-primary rounded-sm"
                   placeholder="Create password"
                   onChange={(e) => setPassword(e.target.value)}
                 />

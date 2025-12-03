@@ -191,11 +191,7 @@ const FilterForm: FC<FilterFormProp> = ({
           Apply
         </Button>
         {!Object.keys(filter).length && (
-          <Button
-            className="bg-btn-secondary bg-sidebar-selected"
-            type="button"
-            disabled={true}
-          >
+          <Button className="bg-btn-secondary" type="button" disabled={true}>
             <span className="text-gray-text ">Clear</span>
           </Button>
         )}

@@ -94,7 +94,7 @@ const Navbar = () => {
             <img
               src="https://unsplash.com/photos/_PtMzmxN1ac/download?ixid=M3wxMjA3fDB8MXxzZWFyY2h8NTJ8fHByb2ZpbGV8ZW58MHx8fHwxNzY0NzM1NzY2fDA&force=true&fm=jpg"
               alt="p"
-              className="cursor-pointer h-8 w-auto rounded-full p-1 hover:border-1 hover:border-sidebar-selected"
+              className="cursor-pointer h-8 w-auto rounded-full p-1 hover:border hover:border-sidebar-selected"
             />
           </li>
         </ul>

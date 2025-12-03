@@ -107,7 +107,7 @@ const OtpVerification: React.FC<{ maxDigit?: number }> = ({ maxDigit = 6 }) => {
                 // biome-ignore lint/suspicious/noArrayIndexKey: Stable index for OTP inputs
                 key={idx}
                 type="text"
-                className="w-12 h-12 border-1 border-gray-text focus:border-2 rounded focus:border-btn-primary outline-none text-center"
+                className="w-12 h-12 border border-gray-text focus:border-2 rounded focus:border-btn-primary outline-none text-center"
                 value={input}
                 onChange={(e) => handleOnChange(e.target.value, idx)}
                 ref={(inp) => {

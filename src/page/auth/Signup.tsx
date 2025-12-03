@@ -317,7 +317,7 @@ const Signup: React.FC = () => {
             placeholder="Enter your password"
             name="password"
             autoComplete="new-password"
-            className="text-main text-sm p-2 outline-none border-1 border-main/50 focus:border-btn-primary rounded-sm w-full pr-10"
+            className="text-main text-sm p-2 outline-none border border-main/50 focus:border-btn-primary rounded-sm w-full pr-10"
             required
           />
           <BsEye

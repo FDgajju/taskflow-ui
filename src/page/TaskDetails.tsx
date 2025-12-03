@@ -218,7 +218,7 @@ const TaskDetails: React.FC = () => {
             {/* <div className="py-2">
               <H2 text="Attachments" />
 
-              <div className="bg-secondary-bg rounded-3xl flex flex-col items-center p-4 gap-3 border-1 border-sidebar-selected">
+              <div className="bg-secondary-bg rounded-3xl flex flex-col items-center p-4 gap-3 border border-sidebar-selected">
                 {!!taskDetails?.attachments &&
                   taskDetails?.attachments?.length !== 0 && (
                     <div className="flex flex-nowrap gap-2 justify-start w-full items-center overflow-x-auto">
@@ -321,7 +321,7 @@ const TaskDetails: React.FC = () => {
                   className="rounded-2xl p-1 flex flex-col"
                   onClick={() => setDepsInput(true)}
                 >
-                  <p className="border-1 border-gray-text/20 hover:border-btn-primary/40 bg-gray-text/10 p-2 flex justify-center hover:scale-101 transition-all ease-in-out duration-500 rounded-md text-main/70">
+                  <p className="border border-gray-text/20 hover:border-btn-primary/40 bg-gray-text/10 p-2 flex justify-center hover:scale-101 transition-all ease-in-out duration-500 rounded-md text-main/70">
                     <FaPlus />
                   </p>
                 </button>

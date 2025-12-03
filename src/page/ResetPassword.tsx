@@ -18,7 +18,7 @@ const ResetPassword: React.FC = () => {
             <input
               type="email"
               id="email"
-              className="text-main text-sm p-2 outline-none border-1 border-main/50 focus:border-btn-primary rounded-sm"
+              className="text-main text-sm p-2 outline-none border border-main/50 focus:border-btn-primary rounded-sm"
               placeholder="Enter your email"
             />
           </div>
