@@ -1,5 +1,6 @@
-import React, { useEffect, useRef } from "react";
-import Button from "./Button";
+import type React from 'react';
+import { useEffect, useRef } from 'react';
+import Button from './ui/Button';
 
 type TaskDeleteConfirmationProp = {
   title?: string;
@@ -28,25 +29,25 @@ const TaskDeleteConfirmation: React.FC<TaskDeleteConfirmationProp> = ({
   // escape button close
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onCancel();
+      if (event.key === 'Escape') onCancel();
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onCancel]);
 
   return (
     <div className="text-main fixed inset-0 z-50 flex items-center justify-center bg-black/10">
       <div className="w-[30%] min-w-90 bg-primary-bg p-4 rounded-xl shadow-lg flex flex-col gap-4">
         <p className="text-main py-2 border-b-2 font-bold text-lg border-sidebar-selected">
-          {title || "Delete Confirmation"}
+          {title || 'Delete Confirmation'}
         </p>
         {children || (
           <p className="text-gray-text italic">
-            Are you sure you what to delete this:{" "}
+            Are you sure you what to delete this:{' '}
             <span className="underline font-semibold text-main">
-              {id || "#123"}
-            </span>{" "}
+              {id || '#123'}
+            </span>{' '}
             task
           </p>
         )}
@@ -66,7 +67,7 @@ const TaskDeleteConfirmation: React.FC<TaskDeleteConfirmationProp> = ({
             onClick={onConfirm}
           >
             {deleting ? (
-              <div role="status">
+              <div>
                 <svg
                   aria-hidden="true"
                   className="w-4 h-4 text-gray-200 animate-spin dark:text-gray-600 fill-status-overdue"
@@ -86,7 +87,7 @@ const TaskDeleteConfirmation: React.FC<TaskDeleteConfirmationProp> = ({
                 <span className="sr-only">Loading...</span>
               </div>
             ) : (
-              "Confirm"
+              'Confirm'
             )}
           </Button>
         </div>

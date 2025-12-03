@@ -1,9 +1,9 @@
-import type React from "react";
-import { Link } from "react-router-dom";
+import type React from 'react';
+import { Link } from 'react-router-dom';
 
 type ButtonLinkProps = {
   text?: string;
-  type: "button" | "submit" | "reset";
+  type: 'button' | 'submit' | 'reset';
   style?: string;
   className?: string;
   // onClick?: () => void;
@@ -27,7 +27,7 @@ const ButtonLink: React.FC<ButtonLinkProps> = ({
       }`}
       // onClick={onClick}
     >
-      {text || "Submit"}
+      {text || 'Submit'}
     </Link>
   );
 };

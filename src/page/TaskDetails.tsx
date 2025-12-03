@@ -1,34 +1,34 @@
+import axios, { AxiosError } from 'axios';
 import React, {
+  type ChangeEvent,
   // useCallback,
   // useEffect,
   useMemo,
   useState,
-  type ChangeEvent,
-} from "react";
-import { LuClipboardList } from "react-icons/lu";
-import { useNavigate, useParams } from "react-router-dom";
-import axios, { AxiosError } from "axios";
-import toast from "react-hot-toast";
-import Button from "../components/Button";
-import HeadingCard from "../components/HeadingCard";
-import type { DocumentT, TaskT } from "../types/task";
-import { apiEndpoint } from "../constants/env";
-import ButtonLink from "../components/ButtonLink";
-import { prettyDate } from "../utils/getFormatedDate";
-import TaskDeleteConfirmation from "../components/DeleteConfirmation";
-import H2 from "../components/H2";
-import DependencyRow from "../components/DependencyRow";
-import { MdOutlineAddLink } from "react-icons/md";
-import { debounce } from "../utils/debounce";
-import DebounceTasks from "../components/DebounceTasks";
-import TaskMetaSection from "../components/TaskMetaSection";
-import { FaPlus } from "react-icons/fa";
-import useTaskDetails from "../hooks/useTaskDetails";
-import Attachments from "../components/Attachments";
+} from 'react';
+import toast from 'react-hot-toast';
+import { FaPlus } from 'react-icons/fa';
+import { LuClipboardList } from 'react-icons/lu';
+import { MdOutlineAddLink } from 'react-icons/md';
+import { useNavigate, useParams } from 'react-router-dom';
+import Attachments from '../components/Attachments';
+import DebounceTasks from '../components/DebounceTasks';
+import TaskDeleteConfirmation from '../components/DeleteConfirmation';
+import DependencyRow from '../components/DependencyRow';
+import HeadingCard from '../components/HeadingCard';
+import TaskMetaSection from '../components/TaskMetaSection';
+import Button from '../components/ui/Button';
+import ButtonLink from '../components/ui/ButtonLink';
+import H2 from '../components/ui/H2';
+import { apiEndpoint } from '../constants/env';
+import useTaskDetails from '../hooks/useTaskDetails';
+import type { DocumentT, TaskT } from '../types/task';
+import { debounce } from '../utils/debounce';
+import { prettyDate } from '../utils/getFormatedDate';
 
-const formFullDivStyle = "flex flex-col gap-2";
+const formFullDivStyle = 'flex flex-col gap-2';
 const formInputStyle =
-  "w-full bg-input-bg p-4 rounded-2xl  focus:outline-none focus:ring-1 focus:ring-btn-primary transition-all ease duration-300";
+  'w-full bg-input-bg p-4 rounded-2xl  focus:outline-none focus:ring-1 focus:ring-btn-primary transition-all ease duration-300';
 
 const TaskDetails: React.FC = () => {
   const { id } = useParams();
@@ -43,11 +43,11 @@ const TaskDetails: React.FC = () => {
   const dependencies = useMemo<Partial<TaskT>[]>(
     () =>
       task && Array.isArray(task.dependenciesList) ? task.dependenciesList : [],
-    [task]
+    [task],
   );
   // const [loading, setLoading] = useState<boolean>(true);
   const [deleteConfirmation, setDeleteConfirmation] = useState<boolean>(false);
-  const [taskDeleteId, setTaskDeleteId] = useState<string>("");
+  const [taskDeleteId, setTaskDeleteId] = useState<string>('');
   const [showDepsInput, setDepsInput] = useState<boolean>(false);
   const [debounceLoading, setDebounceLoading] = useState<boolean>(false);
   const [debounceDataContainerShow, setDebounceDataContainerShow] =
@@ -57,7 +57,7 @@ const TaskDetails: React.FC = () => {
 
   const taskDetails = useMemo<Partial<TaskT> | null>(
     () => (task && Object.keys(task).length > 0 ? task : null),
-    [task]
+    [task],
   );
 
   const debouncedSearch = useMemo(
@@ -67,23 +67,22 @@ const TaskDetails: React.FC = () => {
         try {
           if (query.length) {
             const resp = await axios.get(
-              `${apiEndpoint}/task?search=${query}&exclude=${excludeIds}`
+              `${apiEndpoint}/task?search=${query}&exclude=${excludeIds}`,
             );
 
-            console.log(resp.data.data);
-            if (String(resp.status).startsWith("2")) {
+            if (String(resp.status).startsWith('2')) {
               setTimeout(() => {
                 setDebounceLoading(false);
                 setDebouncedTasks(resp.data.data);
               }, 500);
             }
-            if (String(resp.status).startsWith("4"))
+            if (String(resp.status).startsWith('4'))
               toast.error(resp.data.error);
-            else if (String(resp.status).startsWith("5"))
+            else if (String(resp.status).startsWith('5'))
               toast.error(
                 resp?.data?.error ||
                   resp?.data?.error?.message ||
-                  "Something unexpected happen, please contact admin!"
+                  'Something unexpected happen, please contact admin!',
               );
           }
         } catch (error) {
@@ -91,12 +90,12 @@ const TaskDetails: React.FC = () => {
           if (error instanceof AxiosError) {
             toast.error(error.response?.data.error || error.message);
           } else {
-            toast.error("An unknown error occurred, please contact admin!");
+            toast.error('An unknown error occurred, please contact admin!');
           }
         }
-        console.log("debounce query", query);
+        console.log('debounce query', query);
       }, 500),
-    []
+    [],
   );
 
   // handle debounce search
@@ -108,7 +107,7 @@ const TaskDetails: React.FC = () => {
       // adding current task
       taskDetails?._id,
     ].filter(Boolean);
-    const excludeIds = excludeIdsArr.join(",");
+    const excludeIds = excludeIdsArr.join(',');
 
     if (e.target.value.length) {
       setDebounceDataContainerShow(true);
@@ -142,7 +141,7 @@ const TaskDetails: React.FC = () => {
           <Button
             type="button"
             onClick={() => {
-              navigate("/tasks");
+              navigate('/tasks');
             }}
             style="bg-btn-secondary"
           >
@@ -162,7 +161,7 @@ const TaskDetails: React.FC = () => {
                 deleting={deleting}
                 id={taskDeleteId}
                 onCancel={() => {
-                  toast.success("Task delete cancelled ❌");
+                  toast.success('Task delete cancelled ❌');
                   setDeleteConfirmation(false);
                 }}
                 onConfirm={deleteTask}
@@ -172,11 +171,11 @@ const TaskDetails: React.FC = () => {
             {/* heading card */}
             <HeadingCard
               className="flex gap-4"
-              highlightText={taskDetails?.status || "todo"}
-              heading={taskDetails?.title || "Task Title"}
-              text={taskDetails?.description || "Task Description"}
+              highlightText={taskDetails?.status || 'todo'}
+              heading={taskDetails?.title || 'Task Title'}
+              text={taskDetails?.description || 'Task Description'}
               icon={<LuClipboardList className="text-primary-bg text-2xl" />}
-              color={taskDetails?.status || "todo"}
+              color={taskDetails?.status || 'todo'}
               highlightBg={`status-${taskDetails?.status}-secondary`}
             >
               <ButtonLink
@@ -190,7 +189,7 @@ const TaskDetails: React.FC = () => {
                 type="button"
                 onClick={() => {
                   setDeleteConfirmation(true);
-                  setTaskDeleteId(taskDetails?._id || "");
+                  setTaskDeleteId(taskDetails?._id || '');
                 }}
                 className="bg-status-overdue-secondary text-status-overdue focus:ring-2 focus:ring-status-overdue"
               >
@@ -201,12 +200,12 @@ const TaskDetails: React.FC = () => {
             {/* time stamps */}
             <div className="bg-secondary-bg flex flex-wrap gap-3 p-2 text-xs rounded-3xl">
               <p className=" border-gray-text py-0.5 px-1.5 rounded-lg text-gray-text font-semibold">
-                Created:{" "}
+                Created:{' '}
                 <span>{prettyDate(String(taskDetails?.createdAt))}</span>
               </p>
               {taskDetails?.updatedAt !== taskDetails?.createdAt && (
                 <p className=" border-gray-text py-0.5 px-1.5 rounded-md text-gray-text font-semibold">
-                  Updated:{" "}
+                  Updated:{' '}
                   <span>{prettyDate(String(taskDetails?.updatedAt))}</span>
                 </p>
               )}
@@ -317,14 +316,15 @@ const TaskDetails: React.FC = () => {
                     </form>
                   </div>
                 )}
-                <div
+                <button
+                  type="button"
                   className="rounded-2xl p-1 flex flex-col"
                   onClick={() => setDepsInput(true)}
                 >
                   <p className="border-1 border-gray-text/20 hover:border-btn-primary/40 bg-gray-text/10 p-2 flex justify-center hover:scale-101 transition-all ease-in-out duration-500 rounded-md text-main/70">
                     <FaPlus />
                   </p>
-                </div>
+                </button>
               </div>
             </div>
           </div>

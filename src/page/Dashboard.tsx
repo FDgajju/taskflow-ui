@@ -1,23 +1,23 @@
-import type React from "react";
-import PageHeader from "../components/PageHeader";
-import TaskStatusNav from "../components/TaskStatusNav";
-import TaskMetricsCard from "../components/TaskMetricsCard";
-import { ImClock } from "react-icons/im";
-import { RiProgress6Line } from "react-icons/ri";
-import { MdTaskAlt } from "react-icons/md";
-import { TbProgressAlert } from "react-icons/tb";
-import { useMemo, useState } from "react";
+import type React from 'react';
+import { useMemo, useState } from 'react';
+import { ImClock } from 'react-icons/im';
+import { MdTaskAlt } from 'react-icons/md';
+import { RiProgress6Line } from 'react-icons/ri';
+import { TbProgressAlert } from 'react-icons/tb';
+import PageHeader from '../components/PageHeader';
 import ProductivityChart, {
   type ChartPoint,
-} from "../components/ProductivityChart";
-import H2 from "../components/H2";
-import TaskTable from "../components/TaskTable";
+} from '../components/ProductivityChart';
+import TaskMetricsCard from '../components/TaskMetricsCard';
+import TaskStatusNav from '../components/TaskStatusNav';
+import TaskTable from '../components/TaskTable';
+import H2 from '../components/ui/H2';
 
 const Dashboard: React.FC = () => {
   const chartData = useMemo<ChartPoint[]>(
     () => [
       {
-        day: "Mon",
+        day: 'Mon',
         totalTasks: 4,
         completed: 2,
         inprogress: 1,
@@ -25,7 +25,7 @@ const Dashboard: React.FC = () => {
         todo: 0,
       },
       {
-        day: "Tue",
+        day: 'Tue',
         totalTasks: 7,
         completed: 3,
         inprogress: 2,
@@ -33,7 +33,7 @@ const Dashboard: React.FC = () => {
         todo: 1,
       },
       {
-        day: "Wed",
+        day: 'Wed',
         totalTasks: 3,
         completed: 1,
         inprogress: 1,
@@ -41,7 +41,7 @@ const Dashboard: React.FC = () => {
         todo: 1,
       },
       {
-        day: "Thu",
+        day: 'Thu',
         totalTasks: 8,
         completed: 4,
         inprogress: 2,
@@ -49,7 +49,7 @@ const Dashboard: React.FC = () => {
         todo: 1,
       },
       {
-        day: "Fri",
+        day: 'Fri',
         totalTasks: 5,
         completed: 2,
         inprogress: 1,
@@ -57,7 +57,7 @@ const Dashboard: React.FC = () => {
         todo: 2,
       },
       {
-        day: "Sat",
+        day: 'Sat',
         totalTasks: 2,
         completed: 1,
         inprogress: 0,
@@ -65,7 +65,7 @@ const Dashboard: React.FC = () => {
         todo: 1,
       },
       {
-        day: "Sun",
+        day: 'Sun',
         totalTasks: 6,
         completed: 3,
         inprogress: 2,
@@ -73,48 +73,48 @@ const Dashboard: React.FC = () => {
         todo: 0,
       },
     ],
-    []
+    [],
   );
 
   const metricsData = useMemo(
     () => [
       {
-        key: "todo",
-        label: "To do",
+        key: 'todo',
+        label: 'To do',
         value: 10,
-        description: "Tasks not yet started",
+        description: 'Tasks not yet started',
         icon: <ImClock className="text-primary-bg text-xl" />,
-        colorClass: "todo",
+        colorClass: 'todo',
       },
       {
-        key: "inprogress",
-        label: "In Progress",
+        key: 'inprogress',
+        label: 'In Progress',
         value: 5,
-        description: "Tasks being worked on",
+        description: 'Tasks being worked on',
         icon: <RiProgress6Line className="text-primary-bg text-xl" />,
-        colorClass: "inprogress",
+        colorClass: 'inprogress',
       },
       {
-        key: "completed",
-        label: "Completed",
+        key: 'completed',
+        label: 'Completed',
         value: 8,
-        description: "Finished tasks",
+        description: 'Finished tasks',
         icon: <MdTaskAlt className="text-primary-bg text-xl" />,
-        colorClass: "done",
+        colorClass: 'done',
       },
       {
-        key: "overdue",
-        label: "Overdue",
+        key: 'overdue',
+        label: 'Overdue',
         value: 3,
-        description: "Past due tasks",
+        description: 'Past due tasks',
         icon: <TbProgressAlert className="text-primary-bg text-xl" />,
-        colorClass: "overdue",
+        colorClass: 'overdue',
       },
     ],
-    []
+    [],
   );
 
-  const [activeTab, setActiveTab] = useState<string | null>("all");
+  const [activeTab, setActiveTab] = useState<string | null>('all');
 
   const activeListStatus = useMemo(() => activeTab, [activeTab]);
 
@@ -131,7 +131,7 @@ const Dashboard: React.FC = () => {
         <div className="grid gap-4 mt-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {metricsData.map((m) => (
             <TaskMetricsCard
-              key={m.description.split(" ").join("-")}
+              key={m.description.split(' ').join('-')}
               icon={m.icon}
               highlightText={m.label}
               metrics={m.value}

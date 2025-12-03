@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   CartesianGrid,
   Legend,
@@ -8,7 +8,7 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "recharts";
+} from 'recharts';
 
 export type ChartPoint = {
   day: string;
@@ -25,7 +25,7 @@ type ProductivityChartProps = {
 
 const ProductivityChart: React.FC<ProductivityChartProps> = ({ data }) => {
   return (
-    <ResponsiveContainer width={"100%"} height={256}>
+    <ResponsiveContainer width={'100%'} height={256}>
       <LineChart data={data}>
         {/* task line  */}
         <Line
@@ -38,9 +38,9 @@ const ProductivityChart: React.FC<ProductivityChartProps> = ({ data }) => {
         />
 
         <CartesianGrid stroke="#e8e8e8" strokeDasharray="3 3" />
-        <XAxis dataKey="day" tick={{ fill: "#949494" }} />
-        <Tooltip /> 
-        <YAxis tick={{ fill: "#949494" }} />
+        <XAxis dataKey="day" tick={{ fill: '#949494' }} />
+        <Tooltip />
+        <YAxis tick={{ fill: '#949494' }} />
 
         {/* Completed tasks line */}
 

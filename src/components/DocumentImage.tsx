@@ -1,19 +1,19 @@
-import React, { useCallback, useEffect, useState } from "react";
-import type { DocumentT } from "../types/task";
-import axios, { AxiosError } from "axios";
-import { apiEndpoint } from "../constants/env";
-import Loader from "./Loader";
-import { MdDelete } from "react-icons/md";
-import TaskDeleteConfirmation from "./DeleteConfirmation";
-import toast from "react-hot-toast";
-import { fnsFormattedDate } from "../utils/getFormatedDate";
+import axios, { AxiosError } from 'axios';
+import React, { useCallback, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { MdDelete } from 'react-icons/md';
+import { apiEndpoint } from '../constants/env';
+import type { DocumentT } from '../types/task';
+import { fnsFormattedDate } from '../utils/getFormatedDate';
+import TaskDeleteConfirmation from './DeleteConfirmation';
+import Loader from './ui/Loader';
 
 const DocumentImage: React.FC<{
   handleImageClick: (url: string) => void;
   document: DocumentT;
   className?: string;
   handleDocumentDelete: (id: string) => void;
-}> = ({ handleImageClick, document, className = "", handleDocumentDelete }) => {
+}> = ({ handleImageClick, document, className = '', handleDocumentDelete }) => {
   const [signedUrl, setSignedUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [deleteConfirmation, setDeleteConfirmation] = useState<boolean>(false);
@@ -23,21 +23,21 @@ const DocumentImage: React.FC<{
     setDeleting(true);
     try {
       const resp = await axios.delete(
-        `${apiEndpoint}/document/${document?._id}`
+        `${apiEndpoint}/document/${document?._id}`,
       );
 
       if (resp.status === 200) {
-        console.log("Document deleted successfully");
+        console.log('Document deleted successfully');
       } else {
-        toast.error("Failed to delete document.");
+        toast.error('Failed to delete document.');
       }
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error(error.message);
 
-        toast.error("Failed to delete document.");
+        toast.error('Failed to delete document.');
       } else {
-        toast.error("Failed to delete document.");
+        toast.error('Failed to delete document.');
       }
     } finally {
       setDeleting(false);
@@ -85,8 +85,8 @@ const DocumentImage: React.FC<{
           title="Delete File"
         >
           <p className="text-gray-text italic">
-            Are you sure you what to delete this:{" "}
-            <span className="text-main font-bold">{document.originalname}</span>{" "}
+            Are you sure you what to delete this:{' '}
+            <span className="text-main font-bold">{document.originalname}</span>{' '}
             File
           </p>
         </TaskDeleteConfirmation>
@@ -96,10 +96,10 @@ const DocumentImage: React.FC<{
         <div
           className={`h-5/6 w-[200px] flex items-center justify-center bg-gray-200 rounded-t-2xl animate-pulse ${className}`}
           style={{
-            backdropFilter: "blur(8px)",
-            backgroundImage: `url("${document.maskImageUrl || ""}")`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
+            backdropFilter: 'blur(8px)',
+            backgroundImage: `url("${document.maskImageUrl || ''}")`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
           }}
         >
           <Loader duration="0.9s" className="w-10 h-10 text-gray-400" />
@@ -107,11 +107,14 @@ const DocumentImage: React.FC<{
       )}
       {!loading && (
         <div className="h-5/6 w-[200px] relative">
+          {/** biome-ignore lint/a11y/noStaticElementInteractions: explanation */}
+          {/** biome-ignore lint/a11y/useKeyWithClickEvents: explanation */}
           <div
             className="absolute top-0 left-0 w-[200px] h-full bg-btn-primary/30 rounded-t-2xl flex-col p-3 opacity-0 hover:opacity-100 transition-opacity duration-200 cursor-pointer flex"
             onClick={() => handleImageClick(signedUrl as string)}
           >
             <button
+              type="button"
               className="p-2 bg-status-overdue-secondary font-bold text-status-overdue focus:ring-2 focus:right-status-overdue block w-fit cursor-pointer rounded-xl text-xs self-end"
               onClick={(e) => {
                 e.stopPropagation();
@@ -121,10 +124,11 @@ const DocumentImage: React.FC<{
               <MdDelete className="text-2xl" />
             </button>
           </div>
+          {/** biome-ignore lint/a11y/useKeyWithClickEvents: explanation */}
           <img
             src={signedUrl as string}
             className={`h-full w-[200px] object-cover rounded-t-2xl cursor-pointer hover:border-2 hover:border-btn-primary/50 transition-all duration-100 p-0.5 ${className}`}
-            alt="Attachment Image"
+            alt="Attachment-Image"
             onClick={() => handleImageClick(signedUrl as string)}
             loading="lazy"
           />
@@ -134,10 +138,10 @@ const DocumentImage: React.FC<{
       <div className="h-1/6 p-2 text-xs flex flex-col gap-1 font-bold">
         <p>
           {(() => {
-            const name = document.originalname || document.name || "";
+            const name = document.originalname || document.name || '';
             if (name.length <= 20) return name;
-            const extIndex = name.lastIndexOf(".");
-            const ext = extIndex !== -1 ? name.slice(extIndex) : "";
+            const extIndex = name.lastIndexOf('.');
+            const ext = extIndex !== -1 ? name.slice(extIndex) : '';
             const base = extIndex !== -1 ? name.slice(0, extIndex) : name;
             return `${base.slice(0, 16)}...${base.slice(-3)}${ext}`;
           })()}

@@ -1,11 +1,11 @@
-import type React from "react";
-import PageHeader from "../components/PageHeader";
-import TaskStatusNav from "../components/TaskStatusNav.tsx";
-import { useMemo, useState } from "react";
-import TaskTable from "../components/TaskTable.tsx";
+import type React from 'react';
+import { useMemo, useState } from 'react';
+import PageHeader from '../components/PageHeader';
+import TaskStatusNav from '../components/TaskStatusNav.tsx';
+import TaskTable from '../components/TaskTable.tsx';
 
 const Tasks: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>("all");
+  const [activeTab, setActiveTab] = useState<string>('all');
 
   const activeStatus = useMemo(() => activeTab, [activeTab]);
 

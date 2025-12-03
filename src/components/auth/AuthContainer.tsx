@@ -1,9 +1,7 @@
-import React from "react";
-import H2 from "./H2";
-
-import TaskFlowIcon from "/menu.png";
-
-import BackgroundImagePath from "/bg1.png";
+import type React from 'react';
+import BackgroundImagePath from '/bg1.png';
+import TaskFlowIcon from '/menu.png';
+import H2 from '../ui/H2';
 
 const AuthContainer: React.FC<{
   heading: string | React.ReactNode;
@@ -15,8 +13,8 @@ const AuthContainer: React.FC<{
       className="w-full flex items-center justify-center"
       style={{
         backgroundImage: `url("${BackgroundImagePath}")`,
-        backgroundPosition: "center",
-        backgroundSize: "cover",
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
       }}
     >
       <div className=" text-main w-[450px] min-w-[300px] flex flex-col items-center justify-center bg-white p-4 shadow-md shadow-main/20 rounded-md">

@@ -1,41 +1,40 @@
-import type React from "react";
-// import { LuCalendarRange } from "react-icons/lu";
-import { PRIORITIES } from "../constants/constants";
-import { CiShoppingTag } from "react-icons/ci";
-import { RiFlagLine } from "react-icons/ri";
-import { FaRegUser } from "react-icons/fa";
-import { MdOutlineAddLink } from "react-icons/md";
-import Button from "../components/Button";
-import { useNavigate } from "react-router-dom";
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import axios, { AxiosError } from 'axios';
+import type React from 'react';
 import {
+  type ChangeEvent,
+  type FormEvent,
   // useEffect,
   useMemo,
   useState,
-  type ChangeEvent,
-  type FormEvent,
-} from "react";
-import toast from "react-hot-toast";
-import axios, { AxiosError } from "axios";
-import { apiEndpoint } from "../constants/env";
+} from 'react';
+import toast from 'react-hot-toast';
+import { CiShoppingTag } from 'react-icons/ci';
+import { FaRegUser } from 'react-icons/fa';
+import { MdOutlineAddLink } from 'react-icons/md';
+import { RiFlagLine } from 'react-icons/ri';
+import { useNavigate } from 'react-router-dom';
+import DebounceTasks from '../components/DebounceTasks';
+import DependencyRow from '../components/DependencyRow';
+import Button from '../components/ui/Button';
+// import { LuCalendarRange } from "react-icons/lu";
+import { PRIORITIES } from '../constants/constants';
+import { apiEndpoint } from '../constants/env';
+import type { TaskT } from '../types/task';
+import { debounce } from '../utils/debounce';
 
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import type { TaskT } from "../types/task";
-import DebounceTasks from "../components/DebounceTasks";
-import { debounce } from "../utils/debounce";
-import DependencyRow from "../components/DependencyRow";
+const ButtonSubmitLoading = '/animation_file/button-loading.lottie';
 
-const ButtonSubmitLoading = "/animation_file/button-loading.lottie";
-
-const formFullDivStyle = "flex flex-col gap-2";
+const formFullDivStyle = 'flex flex-col gap-2';
 const formInputStyle =
-  "w-full bg-input-bg p-4 rounded-2xl  focus:outline-none focus:ring-1 focus:ring-btn-primary transition-all ease duration-300";
-const formLabelStyle = "text-lg font-semibold";
+  'w-full bg-input-bg p-4 rounded-2xl  focus:outline-none focus:ring-1 focus:ring-btn-primary transition-all ease duration-300';
+const formLabelStyle = 'text-lg font-semibold';
 
 const AddTaskForm: React.FC = () => {
   const [taskData, setTaskData] = useState<Partial<TaskT>>({
-    priority: "low",
-    status: "todo",
-    workspace: "1234",
+    priority: 'low',
+    status: 'todo',
+    workspace: '1234',
   });
   const [error, setError] = useState<Record<string, string | undefined>>({});
   const [loading, setLoading] = useState(false);
@@ -46,7 +45,7 @@ const AddTaskForm: React.FC = () => {
   const [debounceList, setDebounceList] = useState<TaskT[]>([]);
   const [debounceLoading, setDebounceLoading] = useState<boolean>(false);
   const [selectedDependencies, setSelectedDependencies] = useState<TaskT[]>([]);
-  const [depInput, setDepsInput] = useState<string>("");
+  const [depInput, setDepsInput] = useState<string>('');
 
   const navigate = useNavigate();
 
@@ -58,22 +57,22 @@ const AddTaskForm: React.FC = () => {
         try {
           if (query.length) {
             const resp = await axios.get(
-              `${apiEndpoint}/task?search=${query}&exclude=${excludeIds}`
+              `${apiEndpoint}/task?search=${query}&exclude=${excludeIds}`,
             );
 
-            if (String(resp.status).startsWith("2")) {
+            if (String(resp.status).startsWith('2')) {
               setTimeout(() => {
                 setDebounceLoading(false);
                 setDebounceList(resp.data.data);
               }, 200);
             }
-            if (String(resp.status).startsWith("4"))
+            if (String(resp.status).startsWith('4'))
               toast.error(resp.data.error);
-            else if (String(resp.status).startsWith("5"))
+            else if (String(resp.status).startsWith('5'))
               toast.error(
                 resp?.data?.error ||
                   resp?.data?.error?.message ||
-                  "Something unexpected happen, please contact admin!"
+                  'Something unexpected happen, please contact admin!',
               );
           }
         } catch (error) {
@@ -81,24 +80,24 @@ const AddTaskForm: React.FC = () => {
           if (error instanceof AxiosError) {
             toast.error(error.response?.data.error || error.message);
           } else {
-            toast.error("An unknown error occurred, please contact admin!");
+            toast.error('An unknown error occurred, please contact admin!');
           }
         }
       }, 500),
-    []
+    [],
   );
 
   // on input change handle
   const handleOnchange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
 
-    if (name === "dependsOn" && !!value.trim()) {
+    if (name === 'dependsOn' && !!value.trim()) {
       setShowDebounceTable(true);
       setDebounceLoading(true);
       setDepsInput(value);
-      debouncedSearch(value, selectedDependencies.map((d) => d._id).join(","));
+      debouncedSearch(value, selectedDependencies.map((d) => d._id).join(','));
     } else {
       handleCloseDebounceTable();
       setError((prev) => {
@@ -132,7 +131,7 @@ const AddTaskForm: React.FC = () => {
     setShowDebounceTable(false);
     setDebounceLoading(false);
     setDebounceList([]);
-    setDepsInput("");
+    setDepsInput('');
   };
 
   // handle submit
@@ -142,36 +141,36 @@ const AddTaskForm: React.FC = () => {
     // setError({});
     setLoading(true);
     const newError: Record<string, string> = {};
-    if (!taskData.title) newError.title = "Title is required!";
+    if (!taskData.title) newError.title = 'Title is required!';
 
-    if (!taskData.deadLine) newError.deadLine = "please specify the deadline!";
+    if (!taskData.deadLine) newError.deadLine = 'please specify the deadline!';
     console.log(newError);
 
     if (Object.keys(newError).length) {
       setError(newError);
       setLoading(false);
-      return toast.error("Please fill all the required fields!");
+      return toast.error('Please fill all the required fields!');
     } else {
       (async () => {
         try {
           const resp = await axios.post(`${apiEndpoint}/task`, taskData);
 
-          if (String(resp.status).startsWith("2"))
-            toast.success("task created!");
-          else if (String(resp.status).startsWith("4"))
+          if (String(resp.status).startsWith('2'))
+            toast.success('task created!');
+          else if (String(resp.status).startsWith('4'))
             toast.error(resp.data.error);
           else
-            toast.error("Something unexpected happen, please contact admin!");
+            toast.error('Something unexpected happen, please contact admin!');
         } catch (error) {
           console.log(error);
           if (error instanceof AxiosError)
             toast.error(error.response?.data.error);
-          else toast.error("Unknown error occurs, please contact admin!");
+          else toast.error('Unknown error occurs, please contact admin!');
         } finally {
           setFadeOut(true);
           setTimeout(() => {
             handleClearState();
-            navigate("/tasks");
+            navigate('/tasks');
           }, 500);
         }
       })();
@@ -191,14 +190,14 @@ const AddTaskForm: React.FC = () => {
     setDebounceList([]);
     setDebounceLoading(false);
     setSelectedDependencies([]);
-    setDepsInput("");
+    setDepsInput('');
   };
 
   return (
     <section className="w-full flex justify-center items-center">
       <div
         className={`w-3/4 p-4 transition-opacity duration-500 ${
-          fadeOut ? "opacity-0" : "opacity-100"
+          fadeOut ? 'opacity-0' : 'opacity-100'
         }`}
       >
         <h2 className=" text-3xl font-bold text-main py-5">Create New Task </h2>
@@ -220,13 +219,13 @@ const AddTaskForm: React.FC = () => {
                 name="title"
                 className={`w-full bg-input-bg p-4 rounded-2xl focus:outline-none focus:ring-1 focus:ring-btn-primary ${
                   error.title
-                    ? "ring-1 ring-priority-high focus:ring-1 focus:ring-priority-high"
-                    : ""
+                    ? 'ring-1 ring-priority-high focus:ring-1 focus:ring-priority-high'
+                    : ''
                 }`}
                 id="t-title"
                 type="text"
                 placeholder="Enter task title"
-                value={taskData.title || ""}
+                value={taskData.title || ''}
                 required
               />
               {error.title && (
@@ -248,7 +247,7 @@ const AddTaskForm: React.FC = () => {
               onChange={handleOnchange}
               name="description"
               className={`${formInputStyle} h-45`}
-              value={taskData.description || ""}
+              value={taskData.description || ''}
               placeholder="Description"
               id="t-description"
             />
@@ -263,11 +262,11 @@ const AddTaskForm: React.FC = () => {
                 <input
                   onChange={handleOnchange}
                   name="deadLine"
-                  value={taskData.deadLine || ""}
+                  value={taskData.deadLine || ''}
                   className={`${formInputStyle} w-full ${
                     error.deadLine
-                      ? "ring-1 ring-priority-high focus:ring-1 focus:ring-priority-high"
-                      : ""
+                      ? 'ring-1 ring-priority-high focus:ring-1 focus:ring-priority-high'
+                      : ''
                   }`}
                   type="date"
                   id="t-due-date"
@@ -292,7 +291,7 @@ const AddTaskForm: React.FC = () => {
                 <select
                   onChange={handleOnchange}
                   name="priority"
-                  value={taskData.priority || ""}
+                  value={taskData.priority || ''}
                   className={`${formInputStyle} appearance-none`}
                   id="t-priority"
                   required
@@ -315,7 +314,7 @@ const AddTaskForm: React.FC = () => {
                 <input
                   onChange={handleOnchange}
                   name="tag"
-                  value={taskData.tag || ""}
+                  value={taskData.tag || ''}
                   className={formInputStyle}
                   type="text"
                   id="t-tag"
@@ -334,7 +333,7 @@ const AddTaskForm: React.FC = () => {
                 <input
                   onChange={handleOnchange}
                   name="assignedTo"
-                  value={taskData.assignedTo || ""}
+                  value={taskData.assignedTo || ''}
                   className={formInputStyle}
                   type="text"
                   placeholder="Add team member"
@@ -369,7 +368,7 @@ const AddTaskForm: React.FC = () => {
             <div className="relative">
               <input
                 onChange={handleOnchange}
-                value={depInput || ""}
+                value={depInput || ''}
                 name="dependsOn"
                 className={formInputStyle}
                 type="text"
@@ -404,7 +403,7 @@ const AddTaskForm: React.FC = () => {
               onClick={() => {
                 handleClearState();
                 setTimeout(() => {
-                  navigate("/tasks");
+                  navigate('/tasks');
                 }, 500);
               }}
               style="bg-btn-secondary text-btn-primary "

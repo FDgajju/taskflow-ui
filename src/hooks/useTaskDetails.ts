@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
-import { apiEndpoint } from "../constants/env";
-import axios, { AxiosError } from "axios";
-import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
-import type { TaskT } from "../types/task";
+import axios, { AxiosError } from 'axios';
+import { useCallback, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import { apiEndpoint } from '../constants/env';
+import type { TaskT } from '../types/task';
 
 const useTaskDetails = (taskId: string) => {
   const [task, setTask] = useState<Partial<TaskT> | null>(null);
@@ -15,24 +15,24 @@ const useTaskDetails = (taskId: string) => {
     setLoading(true);
     try {
       const resp = await axios(`${apiEndpoint}/task/${taskId}`);
-      if (String(resp.status).startsWith("2")) {
+      if (String(resp.status).startsWith('2')) {
         setTask(resp.data.data);
         setTimeout(() => {
           setLoading(false);
         }, 500);
       } else {
-        toast.error(resp.data.error || "Could not fetch task");
-        navigate("/tasks");
+        toast.error(resp.data.error || 'Could not fetch task');
+        navigate('/tasks');
       }
     } catch (error) {
       console.log(error);
       if (error instanceof AxiosError) {
         toast.error(error.response?.data.error || error.message);
       } else {
-        toast.error("An unknown error occurred!");
+        toast.error('An unknown error occurred!');
       }
 
-      navigate("/tasks");
+      navigate('/tasks');
     }
   }, [taskId, navigate]);
 
@@ -45,18 +45,18 @@ const useTaskDetails = (taskId: string) => {
     setDeleting(true);
     try {
       const resp = await axios.delete(`${apiEndpoint}/task/${taskId}`);
-      if (String(resp.status).startsWith("2")) {
-        toast.success("Task deleted");
-        navigate("/tasks");
+      if (String(resp.status).startsWith('2')) {
+        toast.success('Task deleted');
+        navigate('/tasks');
       } else {
-        toast.error(resp.data.error || "Something went wrong");
+        toast.error(resp.data.error || 'Something went wrong');
       }
     } catch (error) {
       console.log(error);
       if (error instanceof AxiosError) {
         toast.error(error.response?.data.error || error.message);
       } else {
-        toast.error("Could not delete task");
+        toast.error('Could not delete task');
       }
     } finally {
       setDeleting(false);
@@ -73,7 +73,7 @@ const useTaskDetails = (taskId: string) => {
       fetchData();
     } catch (error) {
       console.log(error);
-      toast.error("Could not add dependency");
+      toast.error('Could not add dependency');
     }
   };
 
@@ -87,7 +87,7 @@ const useTaskDetails = (taskId: string) => {
       fetchData();
     } catch (error) {
       console.log(error);
-      toast.error("Could not remove dependency");
+      toast.error('Could not remove dependency');
     }
   };
 

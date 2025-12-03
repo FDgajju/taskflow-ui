@@ -1,16 +1,18 @@
-import React from "react";
-import { LuCalendar1 } from "react-icons/lu";
-import { prettyDate } from "../utils/getFormatedDate";
-import type { TaskT } from "../types/task";
+import type React from 'react';
+import { CgTag } from 'react-icons/cg';
+import { FaExclamation } from 'react-icons/fa';
+import { HiMiniFaceSmile } from 'react-icons/hi2';
+import { LuCalendar1 } from 'react-icons/lu';
 import {
   colorClassMapTaskPriority,
   colorClassMapTaskPriorityText,
-} from "../constants/colorMap";
-import { FaExclamation } from "react-icons/fa";
-import { CgTag } from "react-icons/cg";
-import { HiMiniFaceSmile } from "react-icons/hi2";
+} from '../constants/colorMap';
+import type { TaskT } from '../types/task';
+import { prettyDate } from '../utils/getFormatedDate';
 
-const TaskMetaSection: React.FC<{ taskDetails: Partial<TaskT> }> = ({ taskDetails }) => {
+const TaskMetaSection: React.FC<{ taskDetails: Partial<TaskT> }> = ({
+  taskDetails,
+}) => {
   return (
     <article className="pt-2 grid grid-cols-1 lg:grid-cols-2 gap-3 ">
       {/* due date */}
@@ -21,7 +23,7 @@ const TaskMetaSection: React.FC<{ taskDetails: Partial<TaskT> }> = ({ taskDetail
         <div className="flex flex-col justify-evenly">
           <p className="text-xl font-semibold">Due Date</p>
           <p className="text-sm text-gray-text font-medium italic">
-            {prettyDate(taskDetails?.deadLine || "")}
+            {prettyDate(taskDetails?.deadLine || '')}
           </p>
         </div>
       </div>
@@ -31,10 +33,10 @@ const TaskMetaSection: React.FC<{ taskDetails: Partial<TaskT> }> = ({ taskDetail
         <div
           className={`${
             colorClassMapTaskPriority[
-              `${taskDetails?.priority || "low"}_secondary`
+              `${taskDetails?.priority || 'low'}_secondary`
             ]
           } ${
-            colorClassMapTaskPriorityText[`${taskDetails?.priority || "low"}`]
+            colorClassMapTaskPriorityText[`${taskDetails?.priority || 'low'}`]
           } p-4 flex justify-center items-center bg-btn-secondary rounded-2xl text-btn-primary`}
         >
           <FaExclamation className="text-3xl" />
@@ -43,7 +45,7 @@ const TaskMetaSection: React.FC<{ taskDetails: Partial<TaskT> }> = ({ taskDetail
           <p className="text-xl font-semibold">Priority</p>
           <p
             className={`${
-              colorClassMapTaskPriorityText[taskDetails?.priority || "low"]
+              colorClassMapTaskPriorityText[taskDetails?.priority || 'low']
             } text-sm text-gray-text font-medium italic`}
           >
             {taskDetails?.priority}

@@ -1,16 +1,16 @@
-import React, { useState, type ChangeEvent, type FormEvent } from "react";
-import PageHeader from "../components/PageHeader";
-import FilterForm from "../components/FilterForm";
-import type { TaskFilter } from "../types/task";
-import { PRIORITIES_DD, STATUS_LIST } from "../constants/constants";
-import { useSearchParams } from "react-router-dom";
-import TaskTable from "../components/TaskTable";
-import { optimizeQueryParams } from "../utils/optimizeQueryParams";
+import React, { type ChangeEvent, type FormEvent, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import FilterForm from '../components/FilterForm';
+import PageHeader from '../components/PageHeader';
+import TaskTable from '../components/TaskTable';
+import { PRIORITIES_DD, STATUS_LIST } from '../constants/constants';
+import type { TaskFilter } from '../types/task';
+import { optimizeQueryParams } from '../utils/optimizeQueryParams';
 
 const FilteredTasks: React.FC = () => {
   const [filter, setFilter] = useState<TaskFilter>({ sort: -1 });
   // const [queryString, setQueryString] = useState<string>("");
-  const [, setError] = useState<string>("");
+  const [, setError] = useState<string>('');
 
   // const navigate = useNavigate();
 
@@ -22,7 +22,7 @@ const FilteredTasks: React.FC = () => {
   }, [searchParams]);
 
   const handleOnChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
 
@@ -34,7 +34,7 @@ const FilteredTasks: React.FC = () => {
     e.preventDefault();
 
     if (!Object.keys(filter).length)
-      setError("Please add at least one filter to apply!");
+      setError('Please add at least one filter to apply!');
 
     if (filter?.priority === PRIORITIES_DD[0]) delete filter.priority;
     if (filter?.status === STATUS_LIST[0]) delete filter.status;

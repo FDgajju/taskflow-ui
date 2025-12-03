@@ -1,16 +1,16 @@
+import axios from 'axios';
 import React, {
+  type ChangeEvent,
   useCallback,
   useEffect,
   useState,
-  type ChangeEvent,
-} from "react";
-import H2 from "./H2";
-import DisplayImage from "./DisplayImage";
-import axios from "axios";
-import { apiEndpoint } from "../constants/env";
-import DocumentImage from "./DocumentImage";
-import type { DocumentT } from "../types/task";
-import toast from "react-hot-toast";
+} from 'react';
+import toast from 'react-hot-toast';
+import { apiEndpoint } from '../constants/env';
+import type { DocumentT } from '../types/task';
+import DisplayImage from './DisplayImage';
+import DocumentImage from './DocumentImage';
+import H2 from './ui/H2';
 
 const Attachments: React.FC<{
   attachedDocuments: DocumentT[];
@@ -21,7 +21,7 @@ const Attachments: React.FC<{
 
   const visibleFiles = React.useMemo(() => files, [files]);
 
-  const [imageUrl, setImageUrl] = useState<string>("");
+  const [imageUrl, setImageUrl] = useState<string>('');
 
   const [isDragging, setIsDragging] = useState<boolean>(false);
 
@@ -32,10 +32,10 @@ const Attachments: React.FC<{
   const uploadFile = useCallback(
     async (fileToUpload: File | null) => {
       const existingFile = files.find(
-        (f) => f.originalname === fileToUpload?.name
+        (f) => f.originalname === fileToUpload?.name,
       );
 
-      if (existingFile && existingFile.maskImageUrl) {
+      if (existingFile?.maskImageUrl) {
         URL.revokeObjectURL(existingFile.maskImageUrl);
       }
 
@@ -44,17 +44,17 @@ const Attachments: React.FC<{
 
         const formData = new FormData();
 
-        formData.append("document", fileToUpload as File);
-        formData.append("for", String(taskId));
+        formData.append('document', fileToUpload as File);
+        formData.append('for', String(taskId));
 
         const resp = await axios.post(`${apiEndpoint}/document`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: { 'Content-Type': 'multipart/form-data' },
         });
 
         if (resp.status === 200) {
           setFiles((prev) => [
             ...prev.filter(
-              (f) => f.originalname !== resp.data.data.originalname
+              (f) => f.originalname !== resp.data.data.originalname,
             ),
             { show: true, ...resp.data.data },
           ]);
@@ -64,7 +64,7 @@ const Attachments: React.FC<{
           ]);
 
           toast.error(
-            resp.data.error || "Failed to upload file. Please try again."
+            resp.data.error || 'Failed to upload file. Please try again.',
           );
         }
       } catch (error) {
@@ -75,16 +75,16 @@ const Attachments: React.FC<{
         if (error instanceof axios.AxiosError) {
           toast.error(error.response?.data.error || error.message);
         } else {
-          toast.error("An unknown error occurred while uploading the file.");
+          toast.error('An unknown error occurred while uploading the file.');
         }
       }
     },
-    [taskId, setFiles, files]
+    [taskId, files],
   );
 
   const handleOnFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target?.files?.[0]) {
-      const file = e.target.files && e.target.files[0];
+      const file = e.target?.files?.[0];
       if (file) {
         setFiles((prev: DocumentT[]) => [
           ...prev,
@@ -96,9 +96,9 @@ const Attachments: React.FC<{
         ]);
         uploadFile(file);
       }
-      e.target.value = "";
+      e.target.value = '';
     } else {
-      console.log("No file chosen");
+      console.log('No file chosen');
     }
   };
 
@@ -150,9 +150,12 @@ const Attachments: React.FC<{
   };
 
   return (
-    <div className="py-2"  aria-label="Attachments section">
+    // biome-ignore lint/a11y/useAriaPropsSupportedByRole: explanation
+    <div className="py-2" aria-label="Attachments section">
       <H2 className="p-2" text="Attachments" />
 
+      {/** biome-ignore lint/a11y/noStaticElementInteractions: explanation */}
+      {/** biome-ignore lint/a11y/useAriaPropsSupportedByRole: explanation */}
       <div
         aria-label="Drop file here to upload"
         className="relative bg-secondary-bg rounded-3xl flex flex-col items-center p-4 gap-3 border-1 border-sidebar-selected"
@@ -171,7 +174,7 @@ const Attachments: React.FC<{
               <DisplayImage
                 handleClose={() => {
                   setShowImage(false);
-                  setImageUrl("");
+                  setImageUrl('');
                 }}
                 url={imageUrl}
               />
@@ -199,7 +202,7 @@ const Attachments: React.FC<{
             htmlFor="files"
             className="font-bold text-btn-primary cursor-pointer"
           >
-            Add {!!attachedDocuments.length && "more"} attachments
+            Add {!!attachedDocuments.length && 'more'} attachments
           </label>
           <input
             type="file"

@@ -1,10 +1,10 @@
-import type React from "react";
+import type React from 'react';
 
 const H2: React.FC<{ text: string; className?: string }> = ({
   text,
-  className = "",
+  className = '',
 }) => {
-  const localStyle = "text-main text-xl font-bold ";
+  const localStyle = 'text-main text-xl font-bold ';
   return <h2 className={`${localStyle} ${className}`}>{text}</h2>;
 };
 

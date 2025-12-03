@@ -1,11 +1,12 @@
-import React, { useEffect } from "react";
-import type { TaskT } from "../types/task";
-import HightedText from "./HightedText";
+import type React from 'react';
+import { useEffect } from 'react';
 import {
   colorClassMapTaskStatus,
   colorClassMapTaskStatusText,
-} from "../constants/colorMap";
-import Loader from "./Loader";
+} from '../constants/colorMap';
+import type { TaskT } from '../types/task';
+import HightedText from './ui/HightedText';
+import Loader from './ui/Loader';
 
 const DebounceTasks: React.FC<{
   tasks: TaskT[];
@@ -15,12 +16,12 @@ const DebounceTasks: React.FC<{
 }> = ({ tasks, handleClick, loading, handleClose }) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") handleClose();
+      if (e.key === 'Escape') handleClose();
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleClose]);
 
   return (
     <div className="absolute bottom-16 w-full z-10 max-h-80 flex flex-col gap-1">
@@ -45,6 +46,8 @@ const DebounceTasks: React.FC<{
         )}
         {!loading &&
           tasks.map((task) => (
+            // biome-ignore lint/a11y/noStaticElementInteractions: explanation
+            // biome-ignore lint/a11y/useKeyWithClickEvents: explanation
             <div
               onClick={() => handleClick(task._id)}
               key={task._id}

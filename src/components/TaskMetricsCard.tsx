@@ -1,5 +1,5 @@
-import React from "react";
-import { colorClassMapTaskStatus } from "../constants/colorMap";
+import React from 'react';
+import { colorClassMapTaskStatus } from '../constants/colorMap';
 
 type TaskMetricsCardProps = {
   icon: React.ReactNode;
@@ -14,9 +14,8 @@ const TaskMetricsCard: React.FC<TaskMetricsCardProps> = ({
   highlightText,
   metrics,
   text,
-  color = "done",
+  color = 'done',
 }) => {
-
   return (
     <article className="rounded-3xl p-5 flex flex-col justify-center items-start gap-4 text-main bg-secondary-bg">
       <div

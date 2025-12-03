@@ -1,9 +1,9 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef } from 'react';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: explanation
 export const useDebouncedCallback = <T extends (...args: any[]) => void>(
   fn: T,
-  delay: number = 500
+  delay: number = 500,
 ) => {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -14,6 +14,6 @@ export const useDebouncedCallback = <T extends (...args: any[]) => void>(
         fn(...args);
       }, delay);
     },
-    [delay, fn]
+    [delay, fn],
   );
 };

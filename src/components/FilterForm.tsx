@@ -1,37 +1,35 @@
-import React, { type ChangeEvent, type FormEvent } from "react";
-import Button from "./Button";
-import { TbSortAscending2 } from "react-icons/tb";
-import { RiFlagLine } from "react-icons/ri";
-import { BsInfoCircle } from "react-icons/bs";
-import { FaRegUser } from "react-icons/fa";
-import { PRIORITIES_DD, STATUS_LIST } from "../constants/constants";
-import type { TaskFilter } from "../types/task";
-import { getFormattedDate } from "../utils/getFormatedDate";
+import type { ChangeEvent, FC, FormEvent } from 'react';
+import { BsInfoCircle } from 'react-icons/bs';
+import { FaRegUser } from 'react-icons/fa';
+import { RiFlagLine } from 'react-icons/ri';
+import { TbSortAscending2 } from 'react-icons/tb';
+import { PRIORITIES_DD, STATUS_LIST } from '../constants/constants';
+import type { TaskFilter } from '../types/task';
+import { getFormattedDate } from '../utils/getFormatedDate';
+import Button from './ui/Button';
 
 const sortOptions = [
-  { key: "Latest First", value: -1 },
-  { key: "Oldest First", value: 1 },
+  { key: 'Latest First', value: -1 },
+  { key: 'Oldest First', value: 1 },
 ];
 const formInputStyle =
-  "w-full bg-input-bg p-3 rounded-2xl text-xs focus:outline-none focus:ring-1 focus:ring-btn-primary transition-all ease duration-300";
-const formLabelStyle = "text-sm font-semibold";
+  'w-full bg-input-bg p-3 rounded-2xl text-xs focus:outline-none focus:ring-1 focus:ring-btn-primary transition-all ease duration-300';
+const formLabelStyle = 'text-sm font-semibold';
 
 type FilterFormProp = {
+  filter?: TaskFilter;
+  handleClearFilter: () => void;
   handleOnChange: (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => void;
   handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
-
-  handleClearFilter: () => void;
-
-  filter?: TaskFilter;
 };
 
-const FilterForm: React.FC<FilterFormProp> = ({
+const FilterForm: FC<FilterFormProp> = ({
+  filter = {},
+  handleClearFilter,
   handleOnChange,
   handleSubmit,
-  handleClearFilter,
-  filter = {},
 }) => {
   return (
     <form
@@ -75,7 +73,7 @@ const FilterForm: React.FC<FilterFormProp> = ({
               name="priority"
               className={`${formInputStyle} appearance-none`}
               id="t-priority"
-              value={filter?.priority || ""}
+              value={filter?.priority || ''}
             >
               {PRIORITIES_DD.map((priority) => (
                 <option key={priority} value={priority}>
@@ -96,7 +94,7 @@ const FilterForm: React.FC<FilterFormProp> = ({
             <select
               onChange={handleOnChange}
               name="status"
-              value={filter?.status || ""}
+              value={filter?.status || ''}
               className={`${formInputStyle} appearance-none`}
               id="t-status"
             >
@@ -119,7 +117,7 @@ const FilterForm: React.FC<FilterFormProp> = ({
             <input
               onChange={handleOnChange}
               name="assignedTo"
-              value={filter?.assignedTo || ""}
+              value={filter?.assignedTo || ''}
               // value={taskData.assignedTo || ""}
               className={formInputStyle}
               type="text"
@@ -140,7 +138,7 @@ const FilterForm: React.FC<FilterFormProp> = ({
             <input
               onChange={handleOnChange}
               name="deadLine_from"
-              value={getFormattedDate(filter?.deadLine_from || "")}
+              value={getFormattedDate(filter?.deadLine_from || '')}
               className={`${formInputStyle} md:w-1/2`}
               type="date"
               id="t-due-date"
@@ -149,7 +147,7 @@ const FilterForm: React.FC<FilterFormProp> = ({
             <input
               onChange={handleOnChange}
               name="deadLine_to"
-              value={getFormattedDate(filter?.deadLine_to || "")}
+              value={getFormattedDate(filter?.deadLine_to || '')}
               className={`${formInputStyle} md:w-1/2`}
               type="date"
               id="t-due-date"
@@ -167,7 +165,7 @@ const FilterForm: React.FC<FilterFormProp> = ({
             <input
               onChange={handleOnChange}
               name="created_from"
-              value={getFormattedDate(filter?.created_from || "")}
+              value={getFormattedDate(filter?.created_from || '')}
               className={`${formInputStyle} md:w-1/2`}
               type="date"
               id="t-due-date"
@@ -176,7 +174,7 @@ const FilterForm: React.FC<FilterFormProp> = ({
             <input
               onChange={handleOnChange}
               name="created_to"
-              value={getFormattedDate(filter?.created_to || "")}
+              value={getFormattedDate(filter?.created_to || '')}
               className={`${formInputStyle} md:w-1/2`}
               type="date"
               id="t-due-date"

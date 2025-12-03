@@ -1,12 +1,12 @@
-import type React from "react";
-import { useEffect, useRef, useState } from "react";
+import type React from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const taskStatus = [
-  { key: "all", label: "All" },
-  { key: "todo", label: "Todo" },
-  { key: "inprogress", label: "Inprogress" },
-  { key: "done", label: "Done" },
-  { key: "overdue", label: "Overdue" },
+  { key: 'all', label: 'All' },
+  { key: 'todo', label: 'Todo' },
+  { key: 'inprogress', label: 'Inprogress' },
+  { key: 'done', label: 'Done' },
+  { key: 'overdue', label: 'Overdue' },
 ];
 
 const TaskStatusNav: React.FC<{ handleTabChange: (tab: string) => void }> = ({
@@ -26,15 +26,12 @@ const TaskStatusNav: React.FC<{ handleTabChange: (tab: string) => void }> = ({
     }
   }, [activeTab]);
 
-  const listItemStyle = "cursor-pointer";
-  const listItemTextStyle = "py-3.5 text-gray-text text-sm font-semibold ";
+  const listItemStyle = 'cursor-pointer';
+  const listItemTextStyle = 'py-3.5 text-gray-text text-sm font-semibold ';
 
   return (
     <nav className="text-main">
-      <ul
-        role="tablist"
-        className="relative w-4/4 border-b-2 border-sidebar-selected py-3 flex justify-start gap-6"
-      >
+      <ul className="relative w-4/4 border-b-2 border-sidebar-selected py-3 flex justify-start gap-6">
         {taskStatus.map((task, idx) => (
           <li
             key={task.key}
@@ -43,7 +40,7 @@ const TaskStatusNav: React.FC<{ handleTabChange: (tab: string) => void }> = ({
               tabRefs.current[idx] = el;
             }}
             onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
+              if (e.key === 'Enter' || e.key === ' ') {
                 setActiveTab(task.key);
                 handleTabChange(task.key);
               }
@@ -55,7 +52,7 @@ const TaskStatusNav: React.FC<{ handleTabChange: (tab: string) => void }> = ({
           >
             <span
               className={`${listItemTextStyle} ${
-                activeTab === task.key ? " text-main" : ""
+                activeTab === task.key ? ' text-main' : ''
               }`}
             >
               {task.label}

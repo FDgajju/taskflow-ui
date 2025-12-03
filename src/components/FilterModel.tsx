@@ -1,16 +1,17 @@
 import React, {
+  type ChangeEvent,
+  type FormEvent,
   useEffect,
   useRef,
   useState,
-  type ChangeEvent,
-  type FormEvent,
-} from "react";
-import H2 from "./H2";
-import type { TaskFilter } from "../types/task";
-import { useNavigate } from "react-router-dom";
-import FilterForm from "./FilterForm";
-import { PRIORITIES_DD, STATUS_LIST } from "../constants/constants";
-import { optimizeQueryParams } from "../utils/optimizeQueryParams";
+} from 'react';
+import { useNavigate } from 'react-router-dom';
+import { PRIORITIES_DD, STATUS_LIST } from '../constants/constants';
+import type { TaskFilter } from '../types/task';
+import { optimizeQueryParams } from '../utils/optimizeQueryParams';
+import FilterForm from './FilterForm';
+import H2 from './ui/H2';
+
 // import { TbSortAscending2 } from "react-icons/tb";
 
 type FilterModelProp = {
@@ -19,7 +20,7 @@ type FilterModelProp = {
 
 const FilterModel: React.FC<FilterModelProp> = ({ handleClose }) => {
   const [filter, setFilter] = useState<TaskFilter>({});
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<string>('');
 
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -30,16 +31,16 @@ const FilterModel: React.FC<FilterModelProp> = ({ handleClose }) => {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") handleClose();
+      if (event.key === 'Escape') handleClose();
     };
 
-    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
 
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleClose]);
 
   const handleOnChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFilter((prev) => ({ ...prev, [name]: value }));
@@ -50,24 +51,28 @@ const FilterModel: React.FC<FilterModelProp> = ({ handleClose }) => {
     e.preventDefault();
 
     if (!Object.keys(filter).length)
-      return setError("Please add at least one filter to apply!");
+      return setError('Please add at least one filter to apply!');
 
     if (filter?.priority === PRIORITIES_DD[0]) delete filter.priority;
     if (filter?.status === STATUS_LIST[0]) delete filter.status;
 
     navigate(
-      `/tasks/filter/list?${optimizeQueryParams({ ...filter, sort: -1 })}`
+      `/tasks/filter/list?${optimizeQueryParams({ ...filter, sort: -1 })}`,
     );
 
     setFilter({});
-    setError("");
+    setError('');
   };
 
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: explanation
+    // biome-ignore lint/a11y/noStaticElementInteractions: explanation
     <div
       onClick={handleClose}
       className="text-main fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xs bg-black/30"
     >
+      {/** biome-ignore lint/a11y/noStaticElementInteractions: explanation */}
+      {/** biome-ignore lint/a11y/useKeyWithClickEvents: explanation */}
       <div
         onClick={(e) => e.stopPropagation()}
         className="text-main p-5 min-w-xl rounded-3xl bg-primary-bg border-2 border-main/40"
@@ -75,6 +80,7 @@ const FilterModel: React.FC<FilterModelProp> = ({ handleClose }) => {
         <div className="flex items-center justify-between">
           <H2 className="p-2" text="Apply Filter" />
           <button
+            type="button"
             ref={cancelButtonRef}
             onClick={handleClose}
             className="py-0.5 px-1.5 bg-status-overdue-secondary font-bold text-status-overdue focus:ring-2 focus:right-status-overdue block w-fit cursor-pointer rounded-lg text-xs"
@@ -91,7 +97,9 @@ const FilterModel: React.FC<FilterModelProp> = ({ handleClose }) => {
           </div>
         )}
         <FilterForm
-          handleClearFilter={() => {setFilter({})}}
+          handleClearFilter={() => {
+            setFilter({});
+          }}
           handleOnChange={handleOnChange}
           handleSubmit={handleSubmit}
           filter={filter}

@@ -1,17 +1,17 @@
-import React, { useCallback, useEffect, useState } from "react";
+import axios, { AxiosError } from 'axios';
+import React, { useCallback, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { MdDeleteOutline, MdOutlineModeEdit } from 'react-icons/md';
+import { Link } from 'react-router-dom';
 import {
   colorClassMapTaskPriority,
   colorClassMapTaskStatus,
-} from "../constants/colorMap";
-import HightedText from "./HightedText";
-import { MdDeleteOutline, MdOutlineModeEdit } from "react-icons/md";
-import { Link } from "react-router-dom";
-import { apiEndpoint } from "../constants/env";
-import { prettyDate } from "../utils/getFormatedDate";
-import axios, { AxiosError } from "axios";
-import type { TaskT } from "../types/task";
-import toast from "react-hot-toast";
-import TaskDeleteConfirmation from "./DeleteConfirmation";
+} from '../constants/colorMap';
+import { apiEndpoint } from '../constants/env';
+import type { TaskT } from '../types/task';
+import { prettyDate } from '../utils/getFormatedDate';
+import TaskDeleteConfirmation from './DeleteConfirmation';
+import HightedText from './ui/HightedText';
 // import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 // const LoadingHandAnimation = "/animation_file/loading_hand.lottie";
@@ -31,18 +31,18 @@ const TaskTable: React.FC<TaskTableProps> = ({ queryString = null }) => {
   const fetchData = useCallback(async () => {
     try {
       const resp = await axios.get(
-        `${apiEndpoint}/task?${queryString ? queryString : ""}`
+        `${apiEndpoint}/task?${queryString ? queryString : ''}`,
       );
-      if (String(resp.status).startsWith("2")) setData(resp.data.data);
-      else if (String(resp.status).startsWith("4"))
+      if (String(resp.status).startsWith('2')) setData(resp.data.data);
+      else if (String(resp.status).startsWith('4'))
         toast.error(resp.data.error);
-      else toast.error("Something unexpected happen, please contact admin!");
+      else toast.error('Something unexpected happen, please contact admin!');
     } catch (error) {
       console.log(error);
       if (error instanceof AxiosError) {
         toast.error(error.response?.data.error || error.message);
       } else {
-        toast.error("An unknown error occurred, please contact admin!");
+        toast.error('An unknown error occurred, please contact admin!');
       }
     } finally {
       setLoading(false);
@@ -57,7 +57,7 @@ const TaskTable: React.FC<TaskTableProps> = ({ queryString = null }) => {
     fetchData();
 
     return () => controller.abort();
-  }, [queryString, fetchData]);
+  }, [fetchData]);
 
   // delete confirm
   const handleDeleteConfirm = () => {
@@ -67,17 +67,17 @@ const TaskTable: React.FC<TaskTableProps> = ({ queryString = null }) => {
       try {
         const resp = await axios.delete(`${apiEndpoint}/task/${taskDeleteId}`);
 
-        if (String(resp.status).startsWith("2")) {
+        if (String(resp.status).startsWith('2')) {
           setData((prev) => prev.filter((t) => t._id !== taskDeleteId));
           toast.success(`Task deleted: ${taskDeleteId}`);
-        } else if (String(resp.status).startsWith("4"))
+        } else if (String(resp.status).startsWith('4'))
           toast.error(resp.data.error);
-        else toast.error("Something unexpected happen, please contact admin!");
+        else toast.error('Something unexpected happen, please contact admin!');
       } catch (error) {
         if (error instanceof AxiosError) {
           toast.error(error.response?.data.error || error.message);
         } else {
-          toast.error("An unknown error occurred, please contact admin!");
+          toast.error('An unknown error occurred, please contact admin!');
         }
       } finally {
         setTimeout(() => {
@@ -91,7 +91,7 @@ const TaskTable: React.FC<TaskTableProps> = ({ queryString = null }) => {
 
   // delete cancel
   const handleDeleteCancel = () => {
-    toast.success("Task delete cancelled ❌");
+    toast.success('Task delete cancelled ❌');
     setTaskDeleteId(null);
     setDeleteConfirmation(false);
   };
@@ -105,9 +105,11 @@ const TaskTable: React.FC<TaskTableProps> = ({ queryString = null }) => {
           <table className="w-full text-sm table-fixed rtl:text-right border-collapse overflow-x-auto animate-pulse">
             <tbody>
               {Array.from({ length: 5 }).map((_, idx) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: explanation
                 <tr key={idx}>
                   {[...Array(6)].map((_, cellIdx) => (
                     <td
+                      // biome-ignore lint/suspicious/noArrayIndexKey: explanation
                       key={cellIdx}
                       className="h-8 bg-gray-200 rounded animate-pulse my-2"
                     ></td>
@@ -156,12 +158,12 @@ const TaskTable: React.FC<TaskTableProps> = ({ queryString = null }) => {
                 <td className="text-left px-4 py-4">
                   {prettyDate(task.deadLine)}
                 </td>
-                <td className="text-left px-4 py-4">{task.tag || "-"}</td>
+                <td className="text-left px-4 py-4">{task.tag || '-'}</td>
                 <td className="text-left px-4 py-4">
                   {
                     <HightedText
-                      text={task.status || "#"}
-                      style={colorClassMapTaskStatus[task.status || "todo"]}
+                      text={task.status || '#'}
+                      style={colorClassMapTaskStatus[task.status || 'todo']}
                     />
                   }
                 </td>
@@ -201,8 +203,8 @@ const TaskTable: React.FC<TaskTableProps> = ({ queryString = null }) => {
           aria-live="polite"
           className="text-main text-center text-lg font-medium p-10 mt-20"
         >
-          Data is empty for status{" "}
-          <span className="font-bold underline">{"Try to change filter"}</span>
+          Data is empty for status{' '}
+          <span className="font-bold underline">{'Try to change filter'}</span>
         </h3>
       )}
     </article>

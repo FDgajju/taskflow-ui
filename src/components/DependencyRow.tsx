@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import type { TaskT } from "../types/task";
+import React, { useState } from 'react';
+import { FaArrowRight, FaUnlink } from 'react-icons/fa';
 // import { MdOutlineAddLink } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
-import { FaArrowRight, FaUnlink } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
 import {
   colorClassMapTaskStatus,
   colorClassMapTaskStatusText,
-} from "../constants/colorMap";
-import { prettyDate } from "../utils/getFormatedDate";
+} from '../constants/colorMap';
+import type { TaskT } from '../types/task';
+import { prettyDate } from '../utils/getFormatedDate';
 
 type DependencyRowProp = {
   depsData: Partial<TaskT>;
@@ -22,6 +22,8 @@ const DependencyRow: React.FC<DependencyRowProp> = ({
   const navigate = useNavigate();
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: explanation
+    // biome-ignore lint/a11y/useKeyWithClickEvents: explanation
     <div
       onClick={() => {
         setClicked(true);
@@ -48,9 +50,9 @@ const DependencyRow: React.FC<DependencyRowProp> = ({
       <div className="w-2/8 flex items-center">
         <p
           className={`${
-            colorClassMapTaskStatusText[depsData.status || "todo"]
+            colorClassMapTaskStatusText[depsData.status || 'todo']
           } ${
-            colorClassMapTaskStatus[`${depsData.status || "todo"}_secondary`]
+            colorClassMapTaskStatus[`${depsData.status || 'todo'}_secondary`]
           } py-0.5 px-1.5 rounded-lg text-sm font-bold  `}
         >
           {depsData.status}
@@ -69,7 +71,7 @@ const DependencyRow: React.FC<DependencyRowProp> = ({
           <svg
             aria-hidden="true"
             className="w-4 h-4 text-gray-200 animate-spin dark:text-gray-600 fill-status-todo"
-            style={{ animationDuration: "0.3s" }}
+            style={{ animationDuration: '0.3s' }}
             viewBox="0 0 100 101"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"

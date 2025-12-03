@@ -1,13 +1,13 @@
-import React from "react";
+import type React from 'react';
 
 const Loader: React.FC<{ className?: string; duration?: string }> = ({
-  className = "",
-  duration = "0.3s",
+  className = '',
+  duration = '0.3s',
 }) => {
   return (
     <svg
       aria-hidden="true"
-      className={`w-4 h-4 text-gray-200 animate-spin dark:text-gray-600 fill-status-todo ${className}`}
+      className={`w-4 h-4 text-gray-10 animate-spin dark:text-gray-100 fill-status-todo ${className}`}
       style={{ animationDuration: duration }}
       viewBox="0 0 100 101"
       fill="none"

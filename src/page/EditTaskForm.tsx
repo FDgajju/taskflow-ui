@@ -1,51 +1,51 @@
-import type React from "react";
-// import { LuCalendarRange } from "react-icons/lu";
-import { PRIORITIES } from "../constants/constants";
-import { CiShoppingTag } from "react-icons/ci";
-import { RiFlagLine } from "react-icons/ri";
-import { FaRegUser } from "react-icons/fa";
-import { MdOutlineAddLink } from "react-icons/md";
-import Button from "../components/Button";
-import { useNavigate, useParams } from "react-router-dom";
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import axios, { AxiosError } from 'axios';
+import type React from 'react';
 import {
+  type ChangeEvent,
+  type FormEvent,
   useEffect,
   useMemo,
   useState,
-  type ChangeEvent,
-  type FormEvent,
-} from "react";
-import HightedText from "../components/HightedText";
-import { getFormattedDate } from "../utils/getFormatedDate";
-import toast from "react-hot-toast";
-import axios, { AxiosError } from "axios";
-import { apiEndpoint } from "../constants/env";
-import type { DocumentT, TaskT } from "../types/task";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
-import useTaskDetails from "../hooks/useTaskDetails";
-import DebounceTasks from "../components/DebounceTasks";
-import { debounce } from "../utils/debounce";
-import DependencyRow from "../components/DependencyRow";
-import Attachments from "../components/Attachments";
+} from 'react';
+import toast from 'react-hot-toast';
+import { CiShoppingTag } from 'react-icons/ci';
+import { FaRegUser } from 'react-icons/fa';
+import { MdOutlineAddLink } from 'react-icons/md';
+import { RiFlagLine } from 'react-icons/ri';
+import { useNavigate, useParams } from 'react-router-dom';
+import Attachments from '../components/Attachments';
+import DebounceTasks from '../components/DebounceTasks';
+import DependencyRow from '../components/DependencyRow';
+import Button from '../components/ui/Button';
+import HightedText from '../components/ui/HightedText';
+// import { LuCalendarRange } from "react-icons/lu";
+import { PRIORITIES } from '../constants/constants';
+import { apiEndpoint } from '../constants/env';
+import useTaskDetails from '../hooks/useTaskDetails';
+import type { DocumentT, TaskT } from '../types/task';
+import { debounce } from '../utils/debounce';
+import { getFormattedDate } from '../utils/getFormatedDate';
 
-const ButtonSubmitLoading = "/animation_file/button-loading.lottie";
-const LoadingHand = "/animation_file/loading_hand.lottie";
+const ButtonSubmitLoading = '/animation_file/button-loading.lottie';
+const LoadingHand = '/animation_file/loading_hand.lottie';
 
-const formFullDivStyle = "flex flex-col gap-2";
+const formFullDivStyle = 'flex flex-col gap-2';
 const formInputStyle =
-  "w-full bg-input-bg p-4 rounded-2xl text-gray-600  focus:outline-none focus:ring-1 focus:ring-btn-primary";
-const formLabelStyle = "text-lg font-semibold";
+  'w-full bg-input-bg p-4 rounded-2xl text-gray-600  focus:outline-none focus:ring-1 focus:ring-btn-primary';
+const formLabelStyle = 'text-lg font-semibold';
 
 const EditTaskForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
   const { task: currentTask, loading: loadingData } = useTaskDetails(
-    id as string
+    id as string,
   );
 
   const [updatedTask, setUpdatedTask] = useState<Partial<TaskT>>({});
   const [fadeOut, setFadeOut] = useState(false);
   const [loadingSubmit, setLoadingSUbmit] = useState(false);
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<string>('');
 
   const [showDebounceTable, setShowDebounceTable] = useState<boolean>(false);
 
@@ -63,7 +63,7 @@ const EditTaskForm: React.FC = () => {
     }
   }, [currentTask]);
 
-  const [depInput, setDepsInput] = useState<string>("");
+  const [depInput, setDepsInput] = useState<string>('');
 
   const navigate = useNavigate();
 
@@ -74,22 +74,22 @@ const EditTaskForm: React.FC = () => {
         try {
           if (query.length) {
             const resp = await axios.get(
-              `${apiEndpoint}/task?search=${query}&exclude=${excludeIds}`
+              `${apiEndpoint}/task?search=${query}&exclude=${excludeIds}`,
             );
 
-            if (String(resp.status).startsWith("2")) {
+            if (String(resp.status).startsWith('2')) {
               setTimeout(() => {
                 setDebounceLoading(false);
                 setDebounceList(resp.data.data);
               }, 200);
             }
-            if (String(resp.status).startsWith("4"))
+            if (String(resp.status).startsWith('4'))
               toast.error(resp.data.error);
-            else if (String(resp.status).startsWith("5"))
+            else if (String(resp.status).startsWith('5'))
               toast.error(
                 resp?.data?.error ||
                   resp?.data?.error?.message ||
-                  "Something unexpected happen, please contact admin!"
+                  'Something unexpected happen, please contact admin!',
               );
           }
         } catch (error) {
@@ -97,28 +97,28 @@ const EditTaskForm: React.FC = () => {
           if (error instanceof AxiosError) {
             toast.error(error.response?.data.error || error.message);
           } else {
-            toast.error("An unknown error occurred, please contact admin!");
+            toast.error('An unknown error occurred, please contact admin!');
           }
         }
       }, 500),
-    []
+    [],
   );
 
   // on change handles
   const handleOnchange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   ) => {
-    setError("");
+    setError('');
     const { name, value } = e.target;
 
-    if (name === "dependsOn" && !!value.trim()) {
+    if (name === 'dependsOn' && !!value.trim()) {
       setShowDebounceTable(true);
       setDebounceLoading(true);
       setDepsInput(value);
-      debouncedSearch(value, selectedDependencies.map((d) => d._id).join(","));
+      debouncedSearch(value, selectedDependencies.map((d) => d._id).join(','));
     } else {
       handleCloseDebounceTable();
-      setError("");
+      setError('');
       setUpdatedTask((task) => ({ ...task, [name]: value }));
     }
   };
@@ -129,7 +129,7 @@ const EditTaskForm: React.FC = () => {
     setLoadingSUbmit(true);
 
     if (!Object.keys(updatedTask).length) {
-      setError("No fields are updated!");
+      setError('No fields are updated!');
       setLoadingSUbmit(false);
       return;
     }
@@ -138,25 +138,25 @@ const EditTaskForm: React.FC = () => {
       try {
         const resp = await axios.patch(
           `${apiEndpoint}/task/${id}`,
-          updatedTask
+          updatedTask,
         );
 
-        if (String(resp.status).startsWith("2")) toast.success("Task updated");
-        else if (String(resp.status).startsWith("4"))
+        if (String(resp.status).startsWith('2')) toast.success('Task updated');
+        else if (String(resp.status).startsWith('4'))
           toast.error(resp.data.error);
-        else toast.error("Something unexpected happen, please contact admin!");
+        else toast.error('Something unexpected happen, please contact admin!');
       } catch (error) {
         console.log(error);
         if (error instanceof AxiosError)
           toast.error(
-            error.response?.data.message || "Error while updating task data"
+            error.response?.data.message || 'Error while updating task data',
           );
-        else toast.error("Unexpected Error");
+        else toast.error('Unexpected Error');
       } finally {
         setFadeOut(true);
         setTimeout(() => {
           handleClearState();
-          navigate("/tasks");
+          navigate('/tasks');
         }, 500);
       }
     })();
@@ -189,26 +189,25 @@ const EditTaskForm: React.FC = () => {
     setShowDebounceTable(false);
     setDebounceLoading(false);
     setDebounceList([]);
-    setDepsInput("");
+    setDepsInput('');
   };
 
   const handleClearState = () => {
     setUpdatedTask({});
-    setError("");
+    setError('');
     setFadeOut(true);
     setShowDebounceTable(false);
     setDebounceList([]);
     setDebounceLoading(false);
     setSelectedDependencies([]);
-    setDepsInput("");
+    setDepsInput('');
   };
 
-  console.log(currentTask);
   return (
     <section className="w-full flex flex-col justify-center items-center">
       <div
         className={`w-3/4 p-4 transition-opacity duration-500 ${
-          fadeOut ? "opacity-0" : "opacity-100"
+          fadeOut ? 'opacity-0' : 'opacity-100'
         }`}
       >
         {error && (
@@ -247,7 +246,7 @@ const EditTaskForm: React.FC = () => {
                 required
                 onChange={handleOnchange}
                 name="title"
-                defaultValue={updatedTask.title || currentTask?.title || ""}
+                defaultValue={updatedTask.title || currentTask?.title || ''}
               />
             </div>
 
@@ -263,7 +262,7 @@ const EditTaskForm: React.FC = () => {
                 id="t-description"
                 placeholder="Description"
                 defaultValue={
-                  updatedTask.description || currentTask?.description || ""
+                  updatedTask.description || currentTask?.description || ''
                 }
               />
             </div>
@@ -281,7 +280,7 @@ const EditTaskForm: React.FC = () => {
                   id="t-due-date"
                   required
                   value={getFormattedDate(
-                    updatedTask.deadLine || currentTask?.deadLine || ""
+                    updatedTask.deadLine || currentTask?.deadLine || '',
                   )}
                 />
 
@@ -299,7 +298,7 @@ const EditTaskForm: React.FC = () => {
                   required
                   onChange={handleOnchange}
                   defaultValue={
-                    updatedTask?.priority || currentTask?.priority || ""
+                    updatedTask?.priority || currentTask?.priority || ''
                   }
                 >
                   {PRIORITIES.map((priority) => (
@@ -322,7 +321,7 @@ const EditTaskForm: React.FC = () => {
                   type="text"
                   id="t-tag"
                   placeholder="Add tag"
-                  defaultValue={updatedTask.tag || currentTask?.tag || ""}
+                  defaultValue={updatedTask.tag || currentTask?.tag || ''}
                 />
                 <CiShoppingTag className="absolute top-[60%] right-4.5 text-xl" />
               </div>
@@ -338,7 +337,7 @@ const EditTaskForm: React.FC = () => {
                   type="text"
                   placeholder="Add team member"
                   defaultValue={
-                    updatedTask.assignedTo || currentTask?.assignedTo || ""
+                    updatedTask.assignedTo || currentTask?.assignedTo || ''
                   }
                 />
                 <FaRegUser className="absolute top-[60%] right-4.5 text-xl" />
@@ -388,7 +387,7 @@ const EditTaskForm: React.FC = () => {
                   type="text"
                   id="t-depends"
                   placeholder="Add Dependency"
-                  value={depInput || ""}
+                  value={depInput || ''}
                   name="dependsOn"
                 />
                 <MdOutlineAddLink className="absolute top-[50%] -translate-y-1/2 right-4.5 text-xl" />
@@ -418,7 +417,7 @@ const EditTaskForm: React.FC = () => {
                 onClick={() => {
                   handleClearState();
                   setTimeout(() => {
-                    navigate("/tasks");
+                    navigate('/tasks');
                   }, 500);
                 }}
                 style="bg-btn-secondary text-btn-primary"

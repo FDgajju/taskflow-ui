@@ -1,8 +1,8 @@
-import React, { type ReactNode } from "react";
+import React, { type ReactNode } from 'react';
 import {
   colorClassMapTaskStatus,
   colorClassMapTaskStatusText,
-} from "../constants/colorMap";
+} from '../constants/colorMap';
 
 type HeadingCardProps = {
   icon: React.ReactNode;
@@ -21,9 +21,9 @@ const HeadingCard: React.FC<HeadingCardProps> = ({
   highlightText,
   heading,
   text,
-  color = "done",
+  color = 'done',
   children,
-  className = "",
+  className = '',
 }) => {
   return (
     <article className="rounded-3xl p-6 flex flex-col justify-center items-start gap-4 text-main bg-secondary-bg">
