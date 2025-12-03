@@ -1,2 +1,2 @@
-npm run check
-npx tsc --noEmit
+bun run check
+bun tsc --noEmit
