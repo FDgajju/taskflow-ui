@@ -1,4 +1,5 @@
 import React from 'react';
+import { twMerge } from 'tailwind-merge';
 
 type ButtonProps = {
   text?: string;
@@ -17,12 +18,19 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     { text, type, style, className, onClick, children, disabled = false },
     ref,
   ) => {
-    let buttonStyle = `my-1 cursor-pointer bg-btn-primary py-2 px-4 text-btn-primary-text font-bold rounded-lg text-sm ${
-      style || className
-    }`;
+    let buttonStyle =
+      'my-1 cursor-pointer bg-btn-primary py-2 px-4 text-btn-primary-text font-bold rounded-lg text-sm';
+
+    if (style) {
+      buttonStyle = twMerge(buttonStyle, style);
+    }
+
+    if (className) {
+      buttonStyle = twMerge(buttonStyle, className);
+    }
 
     if (disabled) {
-      buttonStyle += ' bg-btn-primary/50';
+      buttonStyle = twMerge(buttonStyle, 'bg-btn-primary/50');
     }
 
     return (
