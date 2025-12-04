@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useContext, type ReactNode } from 'react';
 import { FiHelpCircle } from 'react-icons/fi';
 import { GoBell } from 'react-icons/go';
 import { IoSettingsOutline } from 'react-icons/io5';
@@ -8,28 +8,33 @@ import { twMerge } from 'tailwind-merge';
 import HeaderIcon from '/menu.png';
 import SearchIcon from '/search.svg';
 import Button from '../components/ui/Button';
+import { sidebarContext } from '../context/SidebarContext';
 
 export const ButtonIcon = ({
   children: icon,
   type = 'button',
   className,
+  onClick = () => {},
 }: {
   children: ReactNode;
   type?: 'button' | 'submit' | 'reset' | undefined;
   className?: string;
+  onClick?: () => void;
 }) => {
   let buttonStyle = 'hover:bg-sidebar-selected p-1 rounded-md cursor-pointer';
   if (className) {
     buttonStyle = twMerge(buttonStyle, className);
   }
   return (
-    <button type={type} className={buttonStyle}>
+    <button type={type} className={buttonStyle} onClick={onClick}>
       {icon}
     </button>
   );
 };
 
 const Navbar = () => {
+  const { toggleSidebar } = useContext(sidebarContext);
+
   const navigate = useNavigate();
   return (
     <nav className="w-full h-12 bg-secondary-bg border-b-2 border-b-sidebar-selected p-2">
@@ -39,6 +44,7 @@ const Navbar = () => {
             <ButtonIcon
               type="button"
               className="hover:bg-sidebar-selected p-1 rounded-md"
+              onClick={() => toggleSidebar()}
             >
               <TbLayoutSidebarLeftCollapse className="text-lg" />
             </ButtonIcon>
@@ -50,7 +56,7 @@ const Navbar = () => {
               onClick={() => navigate('/dashboard')}
             >
               <img src={HeaderIcon} alt="Header-icon" className="h-5 w-auto" />
-              <span>Taskflow</span>
+              <span className="font-bold">Taskflow</span>
             </button>
           </li>
         </ul>
